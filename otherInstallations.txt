@@ -1,0 +1,10 @@
+
+express proj
+cd proj
+npm install
+sudo npm install nodemon
+DEBUG=proj ./bin/www
+
+
+installing node oracle
+download sdk and basic copy the files to /opt/instantclient/

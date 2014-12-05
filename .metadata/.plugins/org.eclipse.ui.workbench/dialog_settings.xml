@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="WorkbenchPreferenceDialogSettings">
+		<item value="20" key="DIALOG_Y_ORIGIN"/>
+		<item value="187" key="DIALOG_X_ORIGIN"/>
+	</section>
+	<section name="NewWizardAction">
+		<item value="org.nodeclipse.ui.wizards.ExpressProjectWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
+		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
+			<item value="com.google.gdt.eclipse.suite.newWizards"/>
+			<item value="com.google.gwt.eclipse.core.newWizards"/>
+			<item value="org.eclipse.wst.jsdt.ui.java"/>
+			<item value="org.nodeclipse.ui.wizards.category"/>
+		</list>
+	</section>
+	<section name="InstallationDialogSettings">
+		<item value="800" key="DIALOG_WIDTH"/>
+		<item value="-155" key="DIALOG_Y_ORIGIN"/>
+		<item value="744" key="DIALOG_HEIGHT"/>
+		<item value="-82" key="DIALOG_X_ORIGIN"/>
+		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
+	</section>
+	<section name="ImportExportAction">
+	</section>
+</section>
