@@ -1,6 +1,6 @@
 /**
  * Simple Homework 2 application for CIS 550
- * 
+ *
  * zives
  */
 
@@ -9,7 +9,6 @@
  */
 var express = require('express')
   , routes = require('./routes')
-  , login = require('./routes/login')
   , http = require('http')
   , path = require('path')
   , stylus =  require("stylus")
@@ -44,7 +43,7 @@ function compile(str, path) {
 function init_app() {
 	// all environments
 	app.set('port', process.env.PORT || 8080);
-	
+
 	// Use Jade to do views
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
