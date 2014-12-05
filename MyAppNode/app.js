@@ -9,7 +9,7 @@
  */
 var express = require('express')
   , routes = require('./routes')
-  , actor = require('./routes/actor')
+  , login = require('./routes/login')
   , http = require('http')
   , path = require('path')
   , stylus =  require("stylus")
@@ -23,8 +23,8 @@ init_app(app);
 
 // When we get a request for {app}/ we should call routes/index.js
 app.get('/', routes.do_work);
-// when we get a request for {app/actor} we should call routes/actor.js
-app.get('/actor', actor.do_work);
+// when we get a request for {app/login} we should call routes/actor.js
+app.get('/login', login.do_work);
 
 // Listen on the port we specify
 http.createServer(app).listen(app.get('port'), function(){
