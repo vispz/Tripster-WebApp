@@ -45,7 +45,7 @@ html(lang='en')
       |
       script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
   // TODOVAR
-  body(onload='checkIfLastFail(#{success}, #{error});')
+  body(onload="checkIfLastFail(#{success}, \'#{error}\');")
     .intro
       .container
         .container
@@ -113,16 +113,14 @@ html(lang='en')
               button.btn.btn-lg.btn-primary.btn-block(type='submit', value='Submit') Sign Up
     // jQuery
     script(type='text/javascript', language='javascript').
-      alert("Script working");
       SuccessEnum = {
       SUCCESS : 1,
       FAIL : 0
       };
       function checkIfLastFail(success, error)
       {
-      alert("checkilastfail");
       console.log('In results check');
-      if (typeof( success != 'undefined') ||  typeof (error != 'undefined'))
+      if (typeof(success) != 'undefined' &&  typeof (error) != 'undefined')
       {
       console.log('results success : '+success);
       console.log('results error : '+ error);
@@ -148,7 +146,7 @@ html(lang='en')
       }
       function validateForm()
       {
-      alert("In validate");
+      console.log(document.forms["signupForm"]);
       var firstname = document.forms["signupForm"]["firstname"].value;
       var lastname = document.forms["signupForm"]["lastname"].value;
       var password = document.forms["signupForm"]["password"].value;
@@ -160,7 +158,7 @@ html(lang='en')
       alert("Please enter a valid firstname");
       return false;
       }
-      else if( ( allLetter(lastname)  )
+      else if( allLetter(lastname)  )
       {
       alert("Please enter a valid lastname");
       return false;
@@ -173,14 +171,10 @@ html(lang='en')
       }
       return true;
       }
-      $( "#dp" ).datepicker({
-      changeMonth: true,
-      changeYear: true
-      });
-    |     
-    script(src='/javascripts/jquery-ui.min.js')
     |     
     script(src='/javascripts/jquery.js')
+    |     
+    script(src='/javascripts/jquery-ui.min.js')
     // Bootstrap Core JavaScript
     script(src='/javascripts/bootstrap.min.js')
     // Metis Menu Plugin JavaScript
@@ -191,6 +185,11 @@ html(lang='en')
     script(src='/javascripts/bootstrap-datepicker.js')
     |     
     script.
+      $( "#dp" ).datepicker({
+      changeMonth: true,
+      changeYear: true
+      });
+      console.log('Glu222');
       if (top.location != location) {
       top.location.href = document.location.href ;
       }

@@ -47,6 +47,7 @@ function query_db(res, req, userDetails) {
 	var dob = req.dob;
 	var username = req.username;
 	var password = req.password;
+	
 
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
@@ -76,14 +77,7 @@ function query_db(res, req, userDetails) {
 					else 
 					{
 							console.log("Inserted successfully");
-							var def_url = "http://designyoutrust.com/wp-content/uploads7/designfetishnophotofacebook1.jpg";
-							var results = [{FIRSTNAME : firstname, 
-											LASTNAME : lastname,
-											USERNAME: username,
-											PHOTO_URL : def_url}];
-							res.render('home.jade',
-							{ results: results });		
-
+							getDefaultImage(res, req);	
 					}
 	
 				}); // end connection.execute
@@ -91,6 +85,52 @@ function query_db(res, req, userDetails) {
 	}); // end oracle.connect
 }
 
+function getDefaultImage(res, req)
+{
+
+	var firstname = req.firstname;
+	var lastname = req.lastname;
+	var emailid = req.emailid;
+	var dob = req.dob;
+	var username = req.username;
+	var password = req.password;
+
+	oracle.connect(connectData, function(err, connection) {
+		if ( err ) {
+			console.log(err);
+		} else {
+			// selecting rows
+//			connection.execute("SELECT * FROM users WHERE last_name='" + name + 
+//			"' AND rownum <= 10",
+			var cmd = "SELECT photo_url FROM users WHERE username='default'";
+			console.log(cmd);
+			connection.execute(cmd, 
+						[], 
+				function(err, dbRetVals) 
+				{
+					var def_url;
+					if ( err ) 
+					{
+						def_url ="";
+					} 
+					else 
+					{
+							
+						def_url = dbRetVals[0].PHOTO_URL;
+							
+					}
+	
+					var results = [{FIRSTNAME : firstname, 
+											LASTNAME : lastname,
+											USERNAME: username,
+											PHOTO_URL : def_url}];
+					res.render('home.jade',
+					{ results: results });	
+				}); // end connection.execute
+		}
+	}); // end oracle.connect
+
+}
 
 /*Returns usernames and emailid in db
 */

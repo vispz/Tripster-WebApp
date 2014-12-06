@@ -34,7 +34,7 @@
     -->
   </head>  
   <!-- TODOVAR -->
-  <body onload="checkIfLastFail(#{success}, #{error});">
+  <body onload="checkIfLastFail(#{success}, \'#{error}\');">
     <div class = "intro">
       <div class = "container">
           <div class = "container">
@@ -111,7 +111,7 @@
 
     <!-- jQuery-->
     <script type="text/javascript" language="javascript">
-            alert("Script working");
+            
             SuccessEnum = {
               SUCCESS : 1,
               FAIL : 0
@@ -119,9 +119,8 @@
             
             function checkIfLastFail(success, error)
             {
-              alert("checkilastfail");
               console.log('In results check');
-              if (typeof( success != 'undefined') ||  typeof (error != 'undefined'))
+              if (typeof(success) != 'undefined' &&  typeof (error) != 'undefined')
               {
                 console.log('results success : '+success);
                 console.log('results error : '+ error);
@@ -149,7 +148,7 @@
 
             function validateForm()
             {
-              alert("In validate");
+              console.log(document.forms["signupForm"]);
               var firstname = document.forms["signupForm"]["firstname"].value;
               var lastname = document.forms["signupForm"]["lastname"].value;
               var password = document.forms["signupForm"]["password"].value;
@@ -162,7 +161,7 @@
                 alert("Please enter a valid firstname");
                 return false;
               }
-              else if( ( allLetter(lastname)  )
+              else if( allLetter(lastname)  )
               {
                 alert("Please enter a valid lastname");
                 return false;
@@ -176,15 +175,10 @@
               return true;
               
             }
-              
-
-           $( "#dp" ).datepicker({
-          changeMonth: true,
-          changeYear: true
-  });
+      
     </script>
-    <script src="/javascripts/jquery-ui.min.js"></script>
     <script src="/javascripts/jquery.js"></script>
+    <script src="/javascripts/jquery-ui.min.js"></script>
     <!-- Bootstrap Core JavaScript-->
     <script src="/javascripts/bootstrap.min.js"></script>
     <!-- Metis Menu Plugin JavaScript-->
@@ -193,6 +187,13 @@
     <script src="/javascripts/sb-admin-2.js"></script>
     <script src="/javascripts/bootstrap-datepicker.js"></script>
     <script>
+
+
+           $( "#dp" ).datepicker({
+          changeMonth: true,
+          changeYear: true
+  });
+    console.log('Glu222');
   if (top.location != location) {
     top.location.href = document.location.href ;
   }
