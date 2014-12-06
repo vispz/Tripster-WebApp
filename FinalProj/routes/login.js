@@ -73,17 +73,21 @@ function handleLoginError(res, errorCode){
 	
 	switch(errorCode){
 	case LoginErrorCodeEnum.CONNECTION_ERROR :
+		var errorMsg = "Connection error occurred";
+		console.log(errorMsg);
 		res.render('index.jade',
 						{
 							success : SuccessEnum.FAIL,
-							error : LoginErrorCodeEnum.CONNECTION_ERROR
+							error : errorMsg
 						});
 		break;
 		
 	case LoginErrorCodeEnum.INCORRECT_ID_PASSWORD :
+		var errorMsg = "Incorrect id and password";
+		console.log(errorMsg);
 		res.render('index.jade', {
 					success : SuccessEnum.FAIL,
-					error : LoginErrorCodeEnum.INCORRECT_ID_PASSWORD
+					error : errorMsg
 				  });
 		break;
 	};
@@ -103,9 +107,11 @@ function output_actors(res,username,results) {
 
 /////
 /* GET home page. */
-router.get('/', function(req, res) {
+router.post('/', function(req, res) {
 	//.render('home.jade');
-	query_db(res,req.query.username, req.query.password);
+	req = req.body;
+	// console.log("req data",req);
+	query_db(res,req.username, req.password);
 });
 
 module.exports = router;

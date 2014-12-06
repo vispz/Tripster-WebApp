@@ -10,6 +10,7 @@ var album = require('./routes/createalbum');
 var media = require('./routes/viewmedia');
 var albumlist = require('./routes/viewalbums');
 var users = require('./routes/users');
+var signup = require('./routes/signup');
 var login = require('./routes/login');
 
 
@@ -32,6 +33,7 @@ app.use('/album', album);
 app.use('/users', users);
 app.use('/media', media);
 app.use('/login', login);
+app.use('/signup', signup);
 app.use('/viewalbums', albumlist);
 
 // catch 404 and forward to error handler
