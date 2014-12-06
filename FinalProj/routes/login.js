@@ -52,7 +52,7 @@ function query_db(res,username,password) {
 						
 						if(results.length!=0)
 						{	
-							console.log(results[0].PHOTO_URL);
+							console.log("connection error");
 							output_actors(res, username, results);
 						}
 						else
@@ -96,7 +96,7 @@ function handleLoginError(res, errorCode){
 //results = List object of query results
 function output_actors(res,username,results) {
 	res.render('home.jade',
-			{ title: "Username " + username,
+			{ title: username,
 		results: results }
 	);
 }

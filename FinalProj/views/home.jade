@@ -41,7 +41,8 @@ html(lang='en')
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a.navbar-brand(href='index.html') SB Admin v2.0
+          |           
+          a.navbar-brand(href='index.html') Tripster
         // /.navbar-header
         ul.nav.navbar-top-links.navbar-right
           li.dropdown
@@ -296,6 +297,7 @@ html(lang='en')
                   |                   
                   li
                     a(href='notifications.html') Notifications
+                  |  
                   |                   
                   li
                     a(href='typography.html') Typography
@@ -356,7 +358,7 @@ html(lang='en')
       #page-wrapper
         .row
           .col-lg-12
-            h1.page-header Dashboard
+            h1.page-header Welcome back #{results[0].FIRSTNAME}
           // /.col-lg-12
         // /.row
         .row

@@ -27,7 +27,7 @@ html(lang='en')
       |     
       script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
   |   
-  body(onload='checkIfLastFail(#{success}, #{error});')
+  body(onload='checkIfLastFail(#{results});')
     .container
       .row
         .col-md-4.col-md-offset-4
@@ -60,18 +60,17 @@ html(lang='en')
       CONNECTION_ERROR : 0,
       INCORRECT_ID_PASSWORD : 1
       };
-      function checkIfLastFail(success, error)
+      function checkIfLastFail(results)
       {
-      console.log('In results check');
-      if (typeof success != 'undefined' ||  typeof error != 'undefined')
+      if (typeof results != 'undefined' )
       {
-      console.log('results success : '+success);
-      console.log('results error : '+ error);
-      if (success == SuccessEnum.SUCCESS )
+      console.log('results success : '+results.success);
+      console.log('results error : '+results.error);
+      if (results.success == SuccessEnum.SUCCESS )
       return;
       else
       {
-      if (error = LoginErrorCodeEnum.CONNECTION_ERROR)
+      if (results.error = LoginErrorCodeEnum.CONNECTION_ERROR)
       alert('Oops connection error');
       else
       alert('Incorrect id password');

@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;MyAppNode/routes/user.js&apos; to &apos;actor.js&apos;" description="Rename resource &apos;user.js&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="routes/user.js" name="actor.js" stamp="1379774687020" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;MyAppNode/views/name.jade&apos; to &apos;actor.jade&apos;" description="Rename resource &apos;name.jade&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="views/name.jade" name="actor.jade" stamp="1379774699858" updateReferences="true"/>
-</session>
