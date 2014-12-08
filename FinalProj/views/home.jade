@@ -56,79 +56,95 @@ html(lang='en')
               i.fa.fa-caret-down
             |             
             ul.dropdown-menu.dropdown-messages
-              - var maxDropDown = 3
-              - var numDropDown = 0
-                if maxDropDown < 
-                  maxDropDown 
-                if results.friend_requests.length == 0
+              - var len = results.friend_requests.length
+              //- each trip_var in results.trip_requests    
+              - var maxNum = 5
+              if len <= maxNum
+                  - var numItr = len
+              else
+                  - var numItr = maxNum
+              - for (var i = 0 ; i < numItr ; i++)
+                  - var friend_var = results.friend_requests[i]
                   li
                     .row
-                        .col-lg-12
-                          strong No new friend requests.
-                        // /.col-lg-6
-                      // /.row
-                else
-                  each val in results.friend_requests
-                    li
-                      .row
-                        .col-lg-3
-                          img.friendReqPic(src=val.FRIEND_PHOTO_URL, alt='profilePic', align='left')
-                        // /.col-lg-2
-                        .col-lg-6
-                          .row
-                            .col-sm-6
-                              strong #{val.FRIEND_FIRSTNAME} #{val.FRIEND_LASTNAME}
-                              br
-                            // innercol6
-                            .col-sm-offset-2.col-sm-3
-                              a.btn.btn-default(href='/acceptFriend/'+val.FRIEND_ID) add
-                        // /.col-lg-6
-                      // /.row
-                  |               
-                  |               
+                      .col-lg-3
+                        img.friendReqPic(src=friend_var.FRIEND_PHOTO_URL, alt='profilePic', align='left')
+                      // /.col-lg-2
+                      .col-lg-6
+                        .row
+                          .col-sm-6
+                            =friend_var.FRIEND_FIRSTNAME
+                            =friend_var.FRIEND_LASTNAME
+                          // innercol6
+                          .col-sm-offset-1.col-sm-3
+                            a.btn.btn-primary(href='/friendRequest/accept/?friendusernamae='+friend_var.FRIEND_USERNAME) add
+                          .col-sm-offset-1.col-sm-3
+                            a.btn.btn-default(href='/friendRequest/reject/?friendusernamae='+friend_var.FRIEND_USERNAME) reject
+
+                      // /.col-lg-6
+                    // /.row              
                   |               
                   li.divider
-                  |               
-                  |               
-                  li
-                    a.text-center(href='#')
-                      strong See all Requests
-                      i.fa.fa-angle-right
-                // /.dropdown-friend-requests
-              // /.dropdown
+              if (len == 0)
+                |               
+                |               
+                li
+                  strong(align = "center") No new requests 
+              else if (maxNum < len ) 
+                |               
+                |               
+                li
+                  a.text-center(href='#')
+                    strong(align = "center") See all Requests
+                    i.fa.fa-angle-right
+            // /.dropdown-friend-requests
+          // /.dropdown
           li.dropdown
             a.dropdown-toggle(data-toggle='dropdown', href='#')
               i.fa.fa-send.fa-fw
               i.fa.fa-caret-down
             |             
             ul.dropdown-menu.dropdown-messages
-              li
-                .row
-                  .col-lg-3
-                    img.friendReqPic(src='/images/smiley_face.jpg', alt='profilePic', align='left')
-                  // /.col-lg-2
-                  .col-lg-6
-                    strong Trip 1
-                    br
-                    |                       
+              - var len = results.trip_requests.length
+              //- each trip_var in results.trip_requests    
+              - var maxNum = 5
+              if len <= maxNum
+                  - var numItr = len
+              else
+                  - var numItr = maxNum
+              - for (var i = 0 ; i < numItr ; i++)
+                  - var trip_var = results.trip_requests[i]
+                  li
                     .row
-                      .col-lg-6
-                        a.btn.btn-success(href='#') going
-                      // end smaller col-lg-6
-                      .col-lg-6
-                        a.btn.btn-default(href='#') reject
-                      // end smaller col-lg-6
-                    // end small row
-                    // /.col-lg-6
-                  // /.row
-              |               
-              li.divider
-              |               
-              |               
-              li
-                a.text-center(href='#')
-                  strong See all Requests
-                  i.fa.fa-angle-right
+                        .col-lg-3
+                        =trip_var.TRIP_NAME
+                        .col-lg-9
+                          .row
+                            .col-sm-offset-2.col-sm-3
+                              a.btn.btn-primary(href='/tripRequest/accept/?tripid='+trip_var.TRIP_ID) going
+                            // end smaller col-lg-6
+                            .col-sm-offset-2.col-sm-3
+                              a.btn.btn-defualt(href='/tripRequest/reject/?tripid='+trip_var.TRIP_ID) reject
+                            // end smaller col-lg-6
+                          // end small row
+                        // /.col-lg-6
+                        // /.col-lg-6
+                      // /.row
+                  |               
+                  li.divider
+              if (len == 0)
+                |               
+                |               
+                li
+                  strong(align = "center") No new requests 
+              else if (maxNum < len ) 
+                |               
+                |               
+                li
+                  a.text-center(href='#')
+                    strong(align = "center") See all Requests
+                    i.fa.fa-angle-right
+                    
             // /.dropdown-trips
           |           
           li.dropdown
@@ -138,14 +154,14 @@ html(lang='en')
             |             
             ul.dropdown-menu.dropdown-user
               li
-                a(href='#')
+                a(href='/editprofile')
                   i.fa.fa-wrench.fa-fw
                   | Edit Profile
               |               
               li.divider
               |               
               li
-                a(href='login.html')
+                a(href='/logout')
                   i.fa.fa-sign-out.fa-fw
                   | Logout
             // /.dropdown-user
@@ -167,7 +183,7 @@ html(lang='en')
                 // /input-group
               |               
               li
-                a.active(href='index.html')
+                a.active(href='/editprofile')
                   i.fa.fa-wrench.fa-fw
                   | Edit Profile
           // /.sidebar-collapse
@@ -243,117 +259,39 @@ html(lang='en')
             .panel.panel-default
               .panel-heading
                 i.fa.fa-clock-o.fa-fw
-                | Responsive Timeline
+                | Timeline
               // /.panel-heading
               .panel-body
                 ul.timeline
-                  li
-                    .timeline-badge
-                      i.fa.fa-check
-                    |                     
-                    .timeline-panel
-                      .timeline-heading
-                        h4.timeline-title Lorem ipsum dolor
-                        |                         
-                        p
-                          small.text-muted
-                            i.fa.fa-clock-o
-                            | 11 hours ago via Twitter
-                      |                       
-                      .timeline-body
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero laboriosam dolor perspiciatis omnis exercitationem. Beatae, officia pariatur? Est cum veniam excepturi. Maiores praesentium, porro voluptas suscipit facere rem dicta, debitis.
-                  |                   
-                  li.timeline-inverted
-                    .timeline-badge.warning
-                      i.fa.fa-credit-card
-                    |                     
-                    .timeline-panel
-                      .timeline-heading
-                        h4.timeline-title Lorem ipsum dolor
-                      |                       
-                      .timeline-body
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem dolorem quibusdam, tenetur commodi provident cumque magni voluptatem libero, quis rerum. Fugiat esse debitis optio, tempore. Animi officiis alias, officia repellendus.
-                        |                         
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium maiores odit qui est tempora eos, nostrum provident explicabo dignissimos debitis vel! Adipisci eius voluptates, ad aut recusandae minus eaque facere.
-                  |                   
-                  li
-                    .timeline-badge.danger
-                      i.fa.fa-bomb
-                    |                     
-                    .timeline-panel
-                      .timeline-heading
-                        h4.timeline-title Lorem ipsum dolor
-                      |                       
-                      .timeline-body
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus numquam facilis enim eaque, tenetur nam id qui vel velit similique nihil iure molestias aliquam, voluptatem totam quaerat, magni commodi quisquam.
-                  |                   
-                  li.timeline-inverted
-                    .timeline-panel
-                      .timeline-heading
-                        h4.timeline-title Lorem ipsum dolor
-                      |                       
-                      .timeline-body
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates est quaerat asperiores sapiente, eligendi, nihil. Itaque quos, alias sapiente rerum quas odit! Aperiam officiis quidem delectus libero, omnis ut debitis!
-                  |                   
-                  li
-                    .timeline-badge.info
-                      i.fa.fa-save
-                    |                     
-                    .timeline-panel
-                      .timeline-heading
-                        h4.timeline-title Lorem ipsum dolor
-                      |                       
-                      .timeline-body
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis minus modi quam ipsum alias at est molestiae excepturi delectus nesciunt, quibusdam debitis amet, beatae consequuntur impedit nulla qui! Laborum, atque.
-                        |                         
-                        hr
-                        |                         
-                        .btn-group
-                          button.btn.btn-primary.btn-sm.dropdown-toggle(type='button', data-toggle='dropdown')
-                            i.fa.fa-gear
-                            span.caret
-                          |                           
-                          ul.dropdown-menu(role='menu')
-                            li
-                              a(href='#') Action
-                            |                             
-                            li
-                              a(href='#') Another action
-                            |                             
-                            li
-                              a(href='#') Something else here
-                            |                             
-                            li.divider
-                            |                             
-                            li
-                              a(href='#') Separated link
-                  |                   
-                  li
-                    .timeline-panel
-                      .timeline-heading
-                        h4.timeline-title Lorem ipsum dolor
-                      |                       
-                      .timeline-body
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi fuga odio quibusdam. Iure expedita, incidunt unde quis nam! Quod, quisquam. Officia quam qui adipisci quas consequuntur nostrum sequi. Consequuntur, commodi.
-                  |                   
-                  li.timeline-inverted
-                    .timeline-badge.success
-                      i.fa.fa-graduation-cap
-                    |                     
-                    .timeline-panel
-                      .timeline-heading
-                        h4.timeline-title Lorem ipsum dolor
-                      |                       
-                      .timeline-body
-                        p
-                          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt obcaecati, quaerat tempore officia voluptas debitis consectetur culpa amet, accusamus dolorum fugiat, animi dicta aperiam, enim incidunt quisquam maxime neque eaque.
+                    - var itr = 0
+                    each trip_var in newsfeed_trips   
+                        if ( ( itr++ % 2) == 0)             
+                          li
+                            .timeline-badge.info
+                              i.fa.fa-check
+                            |                     
+                            .timeline-panel
+                              .timeline-heading
+                                a(href='/trips/?tripid='+trip_var.TRIP_ID)
+                                    h4.timeline-title #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME}
+                              |                       
+                              .timeline-body
+                                p
+                                  | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined #{trip_var.TRIP_NAME}.
+                          |
+                        else                   
+                          li.timeline-inverted
+                            .timeline-badge.danger
+                              i.fa.fa-credit-card
+                            |                     
+                            .timeline-panel
+                              .timeline-heading
+                                h4.timeline-title #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME}
+                              |                       
+                              .timeline-body
+                                p
+                                  | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined #{trip_var.TRIP_NAME}.
+                          |      
               // /.panel-body
             // /.panel
           // /.col-lg-8

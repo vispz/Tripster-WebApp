@@ -164,7 +164,7 @@ function loadFriendRequests(res, req, username)
 				"U.photo\_url as friend_photo\_url "+
 				"FROM FRIENDS F INNER JOIN USERS U ON F.USERNAME2 = U.USERNAME "+
 				"WHERE F.USERNAME1 = '"+username+"' AND "+
-				"F.STATUS = 'pending'";
+				"F.STATUS = 'pending' AND F.SENT_BY != F.USERNAME1";
 			console.log(cmd);
 			connection.execute(cmd, 
 						[], 
@@ -191,12 +191,6 @@ function loadFriendRequests(res, req, username)
 function loadTripRequests(res, req, username)
 {
 
-	// If values have already been cached
-	if ( req.session && req.session.trip_requests_results ){
-		render_home(res, req, username);
-		return;
-	}
-	
 	// If values are obtained first time in this session
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
@@ -221,12 +215,133 @@ function loadTripRequests(res, req, username)
 						//success
 						console.log("\n\ntrip_requests_results info : ", trip_requests_results);
 						req.session.trip_requests = trip_requests_results;
-						render_home(res, req, username);
+						loadTripsNewsFeed(res,req, username, true);
 					}
 	
 				}); // end connection.execute
 		}
 	}); // end oracle.connect
+}
+
+
+function loadTripsNewsFeed(res, req, username, toRender)
+{
+	// If values are obtained first time in this session
+	oracle.connect(connectData, function(err, connection) {
+		if ( err ) {
+			console.log(err);
+		} else {
+
+			var cmd = 
+			"SELECT U.USERNAME AS FRIEND\_USERNAME, U.FIRSTNAME AS FRIEND\_FIRSTNAME, U.LASTNAME AS FRIEND\_LASTNAME, "+
+			" T.ID as TRIP\_ID, T.NAME as TRIP\_NAME "+
+			"FROM USERS U INNER JOIN FRIENDS F ON U.USERNAME = F.USERNAME2 "+
+			"INNER JOIN PARTICIPATES P ON P.USERNAME = U.USERNAME "+
+			"INNER JOIN TRIPS T ON T.ID = P.TRIP_ID "+
+			"WHERE F.USERNAME1 = '"+ username+"' AND P.RSVP = 'accepted' "+
+			"AND ROWNUM <= 2";
+			console.log(cmd);
+			connection.execute(cmd, 
+						[], 
+				function(err, newsfeed_trips_results) 
+				{
+					if ( err ) 
+					{
+						handleLoginError(res, LoginErrorCodeEnum.CONNECTION_ERROR);
+					} 
+					else 
+					{	
+						//success
+						console.log("\n\newsfeed_trips_results info : ", newsfeed_trips_results);
+						loadAlbumsNewsFeed(res, req, username, newsfeed_trips_results, toRender);
+					}
+	
+				}); // end connection.execute
+		}
+	}); // end oracle.connect	
+}
+
+
+function loadAlbumsNewsFeed(res, req, username, newsfeed_trips, toRender)
+{
+	// If values are obtained first time in this session
+	oracle.connect(connectData, function(err, connection) {
+		if ( err ) {
+			console.log(err);
+		} else {
+
+			var cmd = 
+
+
+			"WITH USER_ALBUMS AS " +
+		"( " +
+		" SELECT U.USERNAME as FRIEND_USERNAME, U.FIRSTNAME AS FRIEND_FIRSTNAME, " +
+		" U.LASTNAME AS FRIEND_LASTNAME,A.ID AS ALBUM_ID , A.NAME AS ALBUM_NAME  " +
+		" FROM USERS U     INNER JOIN FRIENDS F ON U.USERNAME = F.USERNAME2  " +
+		" INNER JOIN ALBUMS A ON A.USERNAME = U.USERNAME   " +
+		" WHERE F.USERNAME1 = 'andrew_82'  AND ROWNUM <= 10), " +
+		" ALL_PHOTOS AS " +
+		" ( " +
+		" SELECT M.ID AS PHOTO_ID, UA.FRIEND_USERNAME, UA.FRIEND_FIRSTNAME, " +
+		" UA.FRIEND_LASTNAME, UA.ALBUM_ID , UA.ALBUM_NAME " +
+		" FROM MEDIA M  " +
+		" INNER JOIN USER_ALBUMS UA ON M.ALBUM_ID = UA.ALBUM_ID " +
+		" WHERE M.TYPE = 'photo')," +
+		" CHOSEN_PHOTOS AS " +
+		" ( SELECT MIN(PHOTO_ID) AS PHOTO_ID, FRIEND_USERNAME, FRIEND_FIRSTNAME," +
+		" FRIEND_LASTNAME, ALBUM_ID , ALBUM_NAME " +
+		" FROM ALL_PHOTOS " +
+		" GROUP BY FRIEND_USERNAME, FRIEND_FIRSTNAME, FRIEND_LASTNAME, ALBUM_ID , " +
+		" ALBUM_NAME" +
+		" ) " +
+		" SELECT CP.PHOTO_ID, CP.FRIEND_USERNAME, CP.FRIEND_FIRSTNAME, CP.FRIEND_" +
+		" LASTNAME, CP.ALBUM_ID , CP.ALBUM_NAME, M.URL AS PHOTO_URL " +
+		" FROM CHOSEN_PHOTOS CP " +
+		" INNER JOIN MEDIA M ON M.ID = CP.PHOTO_ID ";
+
+
+
+
+
+
+
+
+
+
+
+			"WITH USER\_ALBUM AS("+
+			"SELECT U.USERNAME as FRIEND\_USERNAME, U.FIRSTNAME AS FRIEND\_FIRSTNAME, U.LASTNAME AS FRIEND\_LASTNAME,"+
+			"A.ID AS ALBUM\_ID , A.NAME AS ALBUM\_NAME "+
+			"FROM USERS U INNER JOIN FRIENDS F ON U.USERNAME = F.USERNAME2  "+
+			"INNER JOIN ALBUMS A ON A.USERNAME = U.USERNAME  "+
+			"WHERE F.USERNAME1 = '"+ username+"' AND P.RSVP = 'accepted'  "+
+			"AND ROWNUM <= 10)  "+
+			"SELECT M.URL AS PHOTO\_URL, UA.FRIEND\_USERNAME, UA.FRIEND\_FIRSTNAME, UA.FRIEND\_LASTNAME,   "+
+			"UA.ALBUM\_ID , UA.ALBUM\_NAME "+
+			"FROM MEDIA M  "+ 
+			"INNER JOIN USER\_ALBUMS UA ON M.ALBUM\_ID = UA.ALBUM\_ID WHERE M.TYPE = 'photo'  "+
+			"GROUP BY UA.FRIEND\_USERNAME, UA.FRIEND\_FIRSTNAME, UA.FRIEND\_LASTNAME,   "+
+			"UA.ALBUM\_ID , UA.ALBUM\_NAME HAVING M.ID = MIN(M.ID)  ";
+			;
+			console.log(cmd);
+			connection.execute(cmd, 
+						[], 
+				function(err, newsfeed_albums) 
+				{
+					if ( err ) 
+					{
+						handleLoginError(res, LoginErrorCodeEnum.CONNECTION_ERROR);
+					} 
+					else 
+					{	
+						//success
+						console.log("\n\nnewsfeed_albums info : ", newsfeed_albums);
+						render_home(res, req, username, newsfeed_albums, newsfeed_trips);
+					}
+	
+				}); // end connection.execute
+		}
+	}); // end oracle.connect	
 }
 
 /*
@@ -261,9 +376,11 @@ function handleLoginError(res, errorCode){
 //res = HTTP result object sent back to the client
 //name = Name to query for
 //results = List object of query results
-function render_home(res, req,username) {
+function render_home(res, req,username,newsfeed_albums, newsfeed_trips) {
 	console.log("REQ SESSION : ", req.session);
-	var retVal = { results: req.session };
+	var retVal = { results: req.session,
+					newsfeed_trips : newsfeed_trips,
+					newsfeed_albums : newsfeed_albums };
 	console.log("LOGIN -> HOME VALS : ", retVal);
 	res.render('home.jade', retVal);
 }
@@ -279,6 +396,7 @@ router.post('/', function(req, res) {
 	// If cache result is present
 	if(req.session.name){
 		console.log("\n\n\nCached defined");
+		loadTripsNewsFeed(res, req, req.session.name, false);
 		render_home(res, req, req.session.name);
 	}
 	else
@@ -294,7 +412,8 @@ router.get('/', function(req, res){
 	if(req.session.name)
 	{
 		console.log("\n\n\nCached defined");
-		render_home(res, req, req.session.name);
+		loadTripsNewsFeed(res, req, req.session.name, false);
+		
 	}
 	else
 	{
