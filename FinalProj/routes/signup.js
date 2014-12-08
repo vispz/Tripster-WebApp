@@ -117,15 +117,16 @@ function getDefaultImage(res, req)
 					{
 							
 						def_url = dbRetVals[0].PHOTO_URL;
-							
-					}
-	
-					var results = [{FIRSTNAME : firstname, 
+						var results = [{FIRSTNAME : firstname, 
 											LASTNAME : lastname,
 											USERNAME: username,
 											PHOTO_URL : def_url}];
-					res.render('home.jade',
-					{ results: results });	
+						res.render('home.jade',
+						{ results: results });	
+							
+					}
+	
+					
 				}); // end connection.execute
 		}
 	}); // end oracle.connect

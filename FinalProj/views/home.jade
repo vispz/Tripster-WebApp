@@ -36,10 +36,10 @@ html(lang='en')
       |     
       script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
   |   
-  body
+  body(style='padding-top: 50px')
     #wrapper
       // Navigation
-      nav.navbar.navbar-default.navbar-static-top(role='navigation', style='margin-bottom: 0')
+      nav.navbar.navbar-default.navbar-fixed-top(role='navigation', style='margin-bottom: 0')
         .navbar-header
           button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
             span.sr-only Toggle navigation
@@ -47,7 +47,7 @@ html(lang='en')
             span.icon-bar
             span.icon-bar
           |           
-          a.navbar-brand(href='index.html') Tripster
+          a.navbar-brand(href='/login') Tripster
         // /.navbar-header
         ul.nav.navbar-top-links.navbar-right
           li.dropdown
@@ -67,19 +67,18 @@ html(lang='en')
                   - var friend_var = results.friend_requests[i]
                   li
                     .row
-                      .col-lg-3
+                      .col-lg-offset-1.col-lg-3
                         img.friendReqPic(src=friend_var.FRIEND_PHOTO_URL, alt='profilePic', align='left')
                       // /.col-lg-2
-                      .col-lg-6
-                        .row
-                          .col-sm-6
-                            =friend_var.FRIEND_FIRSTNAME
-                            =friend_var.FRIEND_LASTNAME
-                          // innercol6
-                          .col-sm-offset-1.col-sm-3
-                            a.btn.btn-primary(href='/friendRequest/accept/?friendusernamae='+friend_var.FRIEND_USERNAME) add
-                          .col-sm-offset-1.col-sm-3
-                            a.btn.btn-default(href='/friendRequest/reject/?friendusernamae='+friend_var.FRIEND_USERNAME) reject
+                      .col-lg-8
+                          p
+                          | #{friend_var.FRIEND_FIRSTNAME} #{friend_var.FRIEND_LASTNAME} 
+                          .row
+                            // innercol6
+                            .col-sm-offset-1.col-sm-3
+                              a.btn.btn-primary(href='/friendRequestAccept/?friendusername='+friend_var.FRIEND_USERNAME+'&accepted=true') add
+                            .col-sm-offset-1.col-sm-3
+                              a.btn.btn-default(href='/friendRequestAccept/?friendusername='+friend_var.FRIEND_USERNAME+'&accepted=false') reject
 
                       // /.col-lg-6
                     // /.row              
@@ -101,7 +100,7 @@ html(lang='en')
           // /.dropdown
           li.dropdown
             a.dropdown-toggle(data-toggle='dropdown', href='#')
-              i.fa.fa-send.fa-fw
+              i.fa.fa-glass.fa-fw
               i.fa.fa-caret-down
             |             
             ul.dropdown-menu.dropdown-messages
@@ -121,10 +120,10 @@ html(lang='en')
                         .col-lg-9
                           .row
                             .col-sm-offset-2.col-sm-3
-                              a.btn.btn-primary(href='/tripRequest/accept/?tripid='+trip_var.TRIP_ID) going
+                              a.btn.btn-primary(href='/tripRequestAccept/?tripid='+trip_var.TRIP_ID+'&accepted=true') going
                             // end smaller col-lg-6
                             .col-sm-offset-2.col-sm-3
-                              a.btn.btn-defualt(href='/tripRequest/reject/?tripid='+trip_var.TRIP_ID) reject
+                              a.btn.btn-defualt(href='/tripRequestAccept/?tripid='+trip_var.TRIP_ID+'&accepted=false') reject
                             // end smaller col-lg-6
                           // end small row
                         // /.col-lg-6
@@ -161,7 +160,7 @@ html(lang='en')
               li.divider
               |               
               li
-                a(href='/logout')
+                a(href='/')
                   i.fa.fa-sign-out.fa-fw
                   | Logout
             // /.dropdown-user
@@ -208,7 +207,7 @@ html(lang='en')
                     .huge #{results.no_trips}
                     |                     
                     div Your Trips
-              a(href='#')
+              a(href='/mytrips')
                 .panel-footer
                   span.pull-left View Details
                   span.pull-right
@@ -259,11 +258,12 @@ html(lang='en')
             .panel.panel-default
               .panel-heading
                 i.fa.fa-clock-o.fa-fw
-                | Timeline
+                | Your Timeline
               // /.panel-heading
               .panel-body
                 ul.timeline
                     - var itr = 0
+                    - console.log(newsfeed_trips)
                     each trip_var in newsfeed_trips   
                         if ( ( itr++ % 2) == 0)             
                           li
@@ -272,13 +272,13 @@ html(lang='en')
                             |                     
                             .timeline-panel
                               .timeline-heading
-                                a(href='/trips/?tripid='+trip_var.TRIP_ID)
-                                    h4.timeline-title #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME}
+                                  h4.timeline-title #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME}
                               |                       
                               .timeline-body
                                 p
-                                  | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined #{trip_var.TRIP_NAME}.
-                          |
+                                  | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined 
+                                a(href='/trips/?tripid='+trip_var.TRIP_ID)
+                                  strong #{trip_var.TRIP_NAME}.
                         else                   
                           li.timeline-inverted
                             .timeline-badge.danger
@@ -286,12 +286,49 @@ html(lang='en')
                             |                     
                             .timeline-panel
                               .timeline-heading
-                                h4.timeline-title #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME}
+                                  h4.timeline-title #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME}
                               |                       
                               .timeline-body
                                 p
-                                  | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined #{trip_var.TRIP_NAME}.
-                          |      
+                                  | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined 
+                                a(href='/trips/?tripid='+trip_var.TRIP_ID)
+                                  strong #{trip_var.TRIP_NAME}.
+                    // ALBUM TIMELINE     
+                    - var itr = 0
+                    - console.log(newsfeed_albums)
+                    each album_var in newsfeed_albums  
+                        if ( ( itr++ % 2) == 0)             
+                          li
+                            .timeline-badge.info
+                              i.fa.fa-check
+                            |                     
+                            .timeline-panel
+                              .timeline-heading
+                                  h4.timeline-title #{album_var.FRIEND_FIRSTNAME}, #{album_var.FRIEND_LASTNAME}
+                              |                       
+                              .timeline-body
+                                p
+                                  | #{album_var.FRIEND_FIRSTNAME}, #{album_var.FRIEND_LASTNAME} created a new album 
+                                a(href='/albums/?albumid='+album_var.ALBUM_ID)
+                                  strong #{album_var.ALBUM_NAME}. 
+                                  img(src=album_var.PHOTO_URL, alt='profilePic', align='center', width = "100%")
+                        else                   
+                          li.timeline-inverted
+                            .timeline-badge.danger
+                              i.fa.fa-credit-card
+                            |                     
+                            .timeline-panel
+                              .timeline-heading
+                                  h4.timeline-title #{album_var.FRIEND_FIRSTNAME}, #{album_var.FRIEND_LASTNAME}
+                              |                       
+                              .timeline-body
+                                p
+                                  | #{album_var.FRIEND_FIRSTNAME}, #{album_var.FRIEND_LASTNAME} created a new album 
+                                a(href='/albums/?albumid='+album_var.ALBUM_ID)  
+                                  strong #{album_var.ALBUM_NAME}.
+                                  img(src=album_var.PHOTO_URL, alt='profilePic', align='center', width = "100%")
+                    // ALBUM END TIMELINE     
+
               // /.panel-body
             // /.panel
           // /.col-lg-8
