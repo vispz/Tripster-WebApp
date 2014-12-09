@@ -1,7 +1,228 @@
 doctype html
-html
+html(lang='en')
   head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    meta(charset='utf-8')
+    |     
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    |     
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    |     
+    meta(name='description', content='')
+    |     
+    meta(name='author', content='')
+    |     
+    title Tripster - Home
+    // Bootstrap Core CSS
+    link(href='/stylesheets/bootstrap.min.css', rel='stylesheet')
+    // MetisMenu CSS
+    link(href='/stylesheets/metisMenu.min.css', rel='stylesheet')
+    // Timeline CSS
+    link(href='/stylesheets/timeline.css', rel='stylesheet')
+    // Custom CSS
+    link(href='/stylesheets/sb-admin-2.css', rel='stylesheet')
+    // Morris Charts CSS
+    link(href='/stylesheets/morris.css', rel='stylesheet')
+    // Custom Fonts
+    link(href='/stylesheets/font-awesome.min.css', rel='stylesheet', type='text/css')
+    //block header     
+    style(type='text/css').
+      .friendReqPic {
+      max-width:100%;
+      }
+    // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+    // WARNING: Respond.js doesn't work if you view the page via file://
+    //if lt IE 9
+      script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
+      |     
+      script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
+    //body(style='padding-top: 50px')
+  |   
   body
-    block content
+    #wrapper
+      // Navigation
+      nav.navbar.navbar-default.navbar-static-top(role='navigation', style='margin-bottom: 0')
+        .navbar-header
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          |           
+          a.navbar-brand(href='/login') Tripster
+        // /.navbar-header
+        ul.nav.navbar-top-links.navbar-right
+          li.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+              i.fa.fa-users.fa-fw
+              i.fa.fa-caret-down
+            |             
+            ul.dropdown-menu.dropdown-messages
+              - var len = results.friend_requests.length
+              //- each trip_var in results.trip_requests    
+              - var maxNum = 5
+              if len <= maxNum
+                  - var numItr = len
+              else
+                  - var numItr = maxNum
+              - for (var i = 0 ; i < numItr ; i++)
+                  - var friend_var = results.friend_requests[i]
+                  li
+                    .row
+                      .col-lg-offset-1.col-lg-3
+                        img.friendReqPic(src=friend_var.FRIEND_PHOTO_URL, alt='profilePic', align='left')
+                      // /.col-lg-2
+                      .col-lg-8
+                          p
+                          | #{friend_var.FRIEND_FIRSTNAME} #{friend_var.FRIEND_LASTNAME} 
+                          .row
+                            // innercol6
+                            .col-sm-offset-1.col-sm-3
+                              a.btn.btn-primary(href='/friendRequestAccept/?friendusername='+friend_var.FRIEND_USERNAME+'&accepted=true') add
+                            .col-sm-offset-1.col-sm-3
+                              a.btn.btn-default(href='/friendRequestAccept/?friendusername='+friend_var.FRIEND_USERNAME+'&accepted=false') reject
+
+                      // /.col-lg-6
+                    // /.row              
+                  |               
+                  li.divider
+              if (len == 0)
+                |               
+                |               
+                li
+                  strong(align = "center") No new requests 
+              else if (maxNum < len ) 
+                |               
+                |               
+                li
+                  a.text-center(href='#')
+                    strong(align = "center") See all Requests
+                    i.fa.fa-angle-right
+            // /.dropdown-friend-requests
+          // /.dropdown
+          li.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+              i.fa.fa-glass.fa-fw
+              i.fa.fa-caret-down
+            |             
+            ul.dropdown-menu.dropdown-messages
+              - console.log("\n\n\n\n\n\n\n results:", results, "\nresults.trip_requests: ", results.trip_requests, "len : ", len)
+              - var len = results.trip_requests.length
+              //- each trip_var in results.trip_requests    
+              - var maxNum = 5
+              if len <= maxNum
+                  - var numItr = len
+              else
+                  - var numItr = maxNum
+              - for (var i = 0 ; i < numItr ; i++)
+                  - var trip_var = results.trip_requests[i]
+                  li
+                    .row
+                        .col-lg-3
+                        =trip_var.TRIP_NAME
+                        .col-lg-9
+                          .row
+                            .col-sm-offset-2.col-sm-3
+                              a.btn.btn-primary(href='/tripRequestAccept/?tripid='+trip_var.TRIP_ID+'&accepted=true') going
+                            // end smaller col-lg-6
+                            .col-sm-offset-2.col-sm-3
+                              a.btn.btn-defualt(href='/tripRequestAccept/?tripid='+trip_var.TRIP_ID+'&accepted=false') reject
+                            // end smaller col-lg-6
+                          // end small row
+                        // /.col-lg-6
+                        // /.col-lg-6
+                      // /.row
+                  |               
+                  li.divider
+              if (len == 0)
+                - console.log("In here len 0")
+                |               
+                |               
+                li
+                  strong(align = "center") No new requests 
+              else if (maxNum < len ) 
+                |               
+                |               
+                li
+                  a.text-center(href='#')
+                    strong(align = "center") See all Requests
+                    i.fa.fa-angle-right
+                    
+            // /.dropdown-trips
+          |           
+          li.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+              i.fa.fa-user.fa-fw
+              i.fa.fa-caret-down
+            |             
+            ul.dropdown-menu.dropdown-user
+              li
+                a(href='/editprofile')
+                  i.fa.fa-wrench.fa-fw
+                  | Edit Profile
+              |               
+              li.divider
+              |               
+              li
+                a(href='/')
+                  i.fa.fa-sign-out.fa-fw
+                  | Logout
+            // /.dropdown-user
+          // /.dropdown
+        // /.navbar-top-links
+        .navbar-default.sidebar(role='navigation')
+          .sidebar-nav.navbar-collapse
+            ul#side-menu.nav
+              // TODOVAR
+              li
+                img(src=results.photo_url, alt='profilePic', width='100%', align='middle')
+              li.sidebar-search
+                  .input-group.custom-search-form(method = "get", action ="/search")
+                      input.form-control(type='text', placeholder='Search...')
+                      span.input-group-btn
+                        button.btn.btn-default(type='submit' value="submit" )
+                          i.fa.fa-search
+                        br
+                        .radio
+                            label
+                                input(type='radio', name='optradio')
+                                | Option 1
+                            |         
+                            .radio
+                              label
+                                input(type='radio', name='optradio')
+                                | Option 2
+
+                    // /input-group
+
+                        
+                // /input-group
+              |               
+              li
+                a.active(href='/editprofile')
+                  i.fa.fa-wrench.fa-fw
+                  | Edit Profile
+              |               
+              li
+                a.active(href='/')
+                  i.fa.fa-sign-out.fa-fw
+                  | Logout
+          // /.sidebar-collapse
+        // /.navbar-static-side
+      |       
+      block body
+    // /#page-wrapper
+    // /#wrapper
+    // jQuery
+    script(src='/javascripts/jquery.js')
+    // Bootstrap Core JavaScript
+    script(src='/javascripts/bootstrap.min.js')
+    // Metis Menu Plugin JavaScript
+    script(src='/javascripts/metisMenu.min.js')
+    // Morris Charts JavaScript
+    script(src='/javascripts/raphael.min.js')
+    |     
+    script(src='/javascripts/morris.min.js')
+    |     
+    script(src='/javascripts/morris-data.js')
+    // Custom Theme JavaScript
+    script(src='/javascripts/sb-admin-2.js')

@@ -25,9 +25,9 @@ console.log("INCORRECT : "+LoginErrorCodeEnum.CONNECTION_ERROR);
 
 //res = HTTP result object sent back to the client
 //name = Name to query for
-function query_db(res, req, userDetails) {
-	console.log("Req: ", req);
-	var checkRes = checkInputs(req, userDetails);
+function query_db(res, reqbody, userDetails, req) {
+	console.log("reqbody: ", reqbody);
+	var checkRes = checkInputs(reqbody, userDetails);
 
 	if (typeof(checkRes)== 'undefined')
 		return;
@@ -41,12 +41,13 @@ function query_db(res, req, userDetails) {
 		});
 		return;
 	}
-	var firstname = req.firstname;
-	var lastname = req.lastname;
-	var emailid = req.emailid;
-	var dob = req.dob;
-	var username = req.username;
-	var password = req.password;
+
+	var firstname = reqbody.firstname;
+	var lastname = reqbody.lastname;
+	var emailid = reqbody.emailid;
+	var dob = reqbody.dob;
+	var username = reqbody.username;
+	var password = reqbody.password;
 	
 
 	oracle.connect(connectData, function(err, connection) {
@@ -76,66 +77,21 @@ function query_db(res, req, userDetails) {
 					} 
 					else 
 					{
-							console.log("Inserted successfully");
-							getDefaultImage(res, req);	
+						console.log("Inserted successfully");
+						req.session.fromSignup = true;
+						req.session.username = username;
+						req.session.password = password;
+						res.redirect('/login');
 					}
 	
 				}); // end connection.execute
 		}
 	}); // end oracle.connect
-}
-
-function getDefaultImage(res, req)
-{
-
-	var firstname = req.firstname;
-	var lastname = req.lastname;
-	var emailid = req.emailid;
-	var dob = req.dob;
-	var username = req.username;
-	var password = req.password;
-
-	oracle.connect(connectData, function(err, connection) {
-		if ( err ) {
-			console.log(err);
-		} else {
-			// selecting rows
-//			connection.execute("SELECT * FROM users WHERE last_name='" + name + 
-//			"' AND rownum <= 10",
-			var cmd = "SELECT photo_url FROM users WHERE username='default'";
-			console.log(cmd);
-			connection.execute(cmd, 
-						[], 
-				function(err, dbRetVals) 
-				{
-					var def_url;
-					if ( err ) 
-					{
-						def_url ="";
-					} 
-					else 
-					{
-							
-						def_url = dbRetVals[0].PHOTO_URL;
-						var results = [{FIRSTNAME : firstname, 
-											LASTNAME : lastname,
-											USERNAME: username,
-											PHOTO_URL : def_url}];
-						res.render('home.jade',
-						{ results: results });	
-							
-					}
-	
-					
-				}); // end connection.execute
-		}
-	}); // end oracle.connect
-
 }
 
 /*Returns usernames and emailid in db
 */
-function getUsersInDb(res, req)
+function getUsersInDb(res, reqbody, req)
 {
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
@@ -162,7 +118,7 @@ function getUsersInDb(res, req)
 						console.log("successfully got usernames and email ids from db");
 						console.log("userDetails", userDetails)
 						connection.close(); // done with the connection	
-						query_db(res, req, userDetails);	
+						query_db(res, reqbody, userDetails, req);	
 					}
 	
 				}); // end connection.execute
@@ -174,16 +130,16 @@ function getUsersInDb(res, req)
 /*
 * Parses input and checks to see if valid
 */
-function checkInputs(req, userDetails)
+function checkInputs(reqbody, userDetails)
 {
 
 	var isSuccess, msg;
 	isSuccess = SuccessEnum.SUCCESS;
 	
-	var usernameGn = req.username;
-	var emailidGn = req.emailid;
+	var usernameGn = reqbody.username;
+	var emailidGn = reqbody.emailid;
 	console.log("userDetails in checkInputs" , userDetails);
-	console.log("req in checkInputs" , req);
+	console.log("reqbody in checkInputs" , reqbody);
 
 
 	if (typeof(userDetails)== 'undefined'){
@@ -232,7 +188,7 @@ function checkInputs(req, userDetails)
 router.post('/', function(req, res) {
 	//.render('home.jade');
 	console.log(req.body)
-	getUsersInDb(res,req.body);
+	getUsersInDb(res,req.body, req);
 	
 });
 

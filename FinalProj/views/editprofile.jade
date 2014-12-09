@@ -1,0 +1,235 @@
+extend layout
+//block header
+//  link(href='/stylesheets/datepicker.css', rel='stylesheet')
+block body
+  #page-wrapper(style='padding-top: 10px')
+    .row
+      .col-lg-12
+        .panel.panel-default
+          .panel-heading
+            i.fa.fa-users.fa-fw
+            | Edit Profile
+          // /.panel-heading
+          .panel-body
+            form.form(method="post", action="/saveNewUserData", role="form", id="editform", name="editform", onsumbit="return checkPasswordMatch();")
+              .row
+                .col-xs-6.col-md-6
+                  label First Name
+                  input.form-control(type="text", name="firstname", placeholder="First Name", value=results.firstname, required, autofocus="")
+                .col-xs-6.col-md-6
+                  label Last Name
+                  input.form-control(type="text", name="lastname", placeholder="Last Name", value=results.lastname, required)
+              br
+              .row  
+                .col-lg-6.col-md-6
+                  label Email
+                    input.form-control(type="email", name="email",  value=results.email, placeholder="Your Email", required)
+              br
+              .row  
+                .col-xs-6.col-md-6
+                  label New Password  
+                  input.form-control(type="password", name="new_password", placeholder="New Password")
+              br 
+              .row  
+                .col-xs-6.col-md-6
+                  label Retype New Password
+                  input.form-control(type="password", name="new_password_retype", placeholder="Retype New Password")
+              br
+              .row  
+                .col-xs-6.col-md-6 
+                  label Birth Date
+                  input#dp1.form-control(type="text", align="middle",  value=results.dob, placeholder="mm-dd-yyyy", name="dob", required)
+              br
+              .row      
+                .col-xs-6.col-md-6
+                  label Affiliation
+                  input.form-control(type="text", name="affilitation", value=results.affiliation, placeholder="Affiliation")
+              br
+              .row      
+                .col-xs-6.col-md-6
+                  label Interests
+                  input.form-control(type="text", name="interests", value=results.interests, placeholder="Interests")
+              br
+              .row      
+                .col-xs-6.col-md-6
+                  label Photo url
+                  input.form-control(type="text", name="photo_url", value=results.photo_url, placeholder="url", )
+
+              br
+              .row      
+                .col-xs-6.col-md-6
+                  label Enter Current Password
+                  input.form-control(type="password", name="password", placeholder="Current Password", required)
+              br
+              .row
+                .col-xs-offset-1.col-xs-6.col-md-5
+                  button.btn.btn-lg.btn-primary( type="submit", value="Submit") Save
+                .col-xs-offset-1.col-xs-6.col-md-5
+                  button.btn.btn-lg.btn-default( onClick="resetData();") Reset
+
+    script(type='text/javascript', language='javascript').
+      SuccessEnum = {
+      SUCCESS : 1,
+      FAIL : 0
+      };
+
+      function resetData()
+      {
+      document.getElementById("editform").reset();
+      }
+
+      function checkPasswordMatch()
+      {
+        console.log('in password check');
+        console.log('-- -------- -----');
+        var pass1 = document.getElementById("editform").new_password.value;
+        var pass2 = document.getElementById("editform").new_password_retype.value;
+        var ok = true;
+        if (pass1 != pass2) {
+          //alert("Passwords Do not match");
+          document.getElementById("editform").new_password.style.borderColor = "#E34234";
+          document.getElementById("editform").new_password_retype.style.borderColor = "#E34234";
+          ok = false;
+        }
+        return ok;
+        }
+      }
+
+      function checkIfLastFail(success, error)
+      {
+      console.log('In results check');
+      if (typeof(success) != 'undefined' &&  typeof (error) != 'undefined')
+      {
+      console.log('results success : '+success);
+      console.log('results error : '+ error);
+      if (success == SuccessEnum.SUCCESS )
+      return;
+      else
+      {
+      alert(error);
+      }
+      }
+      }
+      function allLetter(inputtxt)
+      {
+      var letters = /^[A-Za-z]+$/;
+      if(inputtxt.value.match(letters))
+      {
+      return true;
+      }
+      else
+      {
+      return false;
+      }
+      }
+      function validateForm()
+      {
+      console.log(document.forms["signupForm"]);
+      var firstname = document.forms["signupForm"]["firstname"].value;
+      var lastname = document.forms["signupForm"]["lastname"].value;
+      var password = document.forms["signupForm"]["password"].value;
+      alert("validation values <br \\>"+" firstname : "+ firstname
+      +"<br />" + " lastname : " + lastname + "<br />" +
+      "password : "+password);
+      if (allLetter(firstname))
+      {
+      alert("Please enter a valid firstname");
+      return false;
+      }
+      else if( allLetter(lastname)  )
+      {
+      alert("Please enter a valid lastname");
+      return false;
+      }
+      else if (password.length < 5)
+      {
+      alert("Please enter a valid password make sure"+
+      "it is atleast five characters long.");
+      return false;
+      }
+      return true;
+      }
+    script(src='/javascripts/jquery.js')
+    // Bootstrap Core JavaScript
+    script(src='/javascripts/bootstrap.min.js')
+    // Metis Menu Plugin JavaScript
+    script(src='/javascripts/metisMenu.min.js')
+    // Morris Charts JavaScript
+    script(src='/javascripts/raphael.min.js')
+    |     
+    script(src='/javascripts/morris.min.js')
+    |     
+    script(src='/javascripts/morris-data.js')
+    // Custom Theme JavaScript
+    script(src='/javascripts/sb-admin-2.js')
+    |     
+    script(src='/javascripts/bootstrap-datepicker.js')
+    |     
+    script.
+      $( "#dp" ).datepicker({
+      changeMonth: true,
+      changeYear: true
+      });
+      console.log('Glu222');
+      if (top.location != location) {
+      top.location.href = document.location.href ;
+      }
+      $(function(){
+      window.prettyPrint && prettyPrint();
+      $('#dp1').datepicker({
+      format: 'mm-dd-yyyy'
+      });
+      $('#dp2').datepicker();
+      $('#dp3').datepicker();
+      $('#dp3').datepicker();
+      $('#dpYears').datepicker();
+      $('#dpMonths').datepicker();
+      var startDate = new Date(1920,1,20);
+      var endDate = new Date(2014,1,25);
+      $('#dp4').datepicker()
+      .on('changeDate', function(ev){
+      if (ev.date.valueOf() > endDate.valueOf()){
+      $('#alert').show().find('strong').text('The start date can not be greater then the end date');
+      } else {
+      $('#alert').hide();
+      startDate = new Date(ev.date);
+      $('#startDate').text($('#dp4').data('date'));
+      }
+      $('#dp4').datepicker('hide');
+      });
+      $('#dp5').datepicker()
+      .on('changeDate', function(ev){
+      if (ev.date.valueOf() < startDate.valueOf()){
+      $('#alert').show().find('strong').text('The end date can not be less then the start date');
+      } else {
+      $('#alert').hide();
+      endDate = new Date(ev.date);
+      $('#endDate').text($('#dp5').data('date'));
+      }
+      $('#dp5').datepicker('hide');
+      });
+      // disabling dates
+      var nowTemp = new Date();
+      var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+      var checkin = $('#dpd1').datepicker({
+      onRender: function(date) {
+      return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      }
+      }).on('changeDate', function(ev) {
+      if (ev.date.valueOf() > checkout.date.valueOf()) {
+      var newDate = new Date(ev.date)
+      newDate.setDate(newDate.getDate() + 1);
+      checkout.setValue(newDate);
+      }
+      checkin.hide();
+      $('#dpd2')[0].focus();
+      }).data('datepicker');
+      var checkout = $('#dpd2').datepicker({
+      onRender: function(date) {
+      return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+      }
+      }).on('changeDate', function(ev) {
+      checkout.hide();
+      }).data('datepicker');
+      });
+

@@ -91,24 +91,24 @@ html(lang='en')
                 i.glyphicon.glyphicon-globe
               |  Sign up!
             |               
-            form.form(method='post', action='/signup', role='form', name='signupForm', onsubmit='return validateForm();')
+            form.form(method='post', action='/signup', role='form', name='signupForm')
               .row
                 .col-xs-6.col-md-6
-                  input.form-control(name='firstname', placeholder='First Name', type='text', required='', autofocus='')
+                  input.form-control(name='firstname', placeholder='First Name', type='text', required, autofocus='')
                 |                   
                 .col-xs-6.col-md-6
-                  input.form-control(name='lastname', placeholder='Last Name', type='text', required='')
+                  input.form-control(name='lastname', placeholder='Last Name', type='text', required)
               |               
-              input.form-control(name='emailid', placeholder='Your Email', type='email')
+              input.form-control(name='emailid', placeholder='Your Email', type='email', required)
               |                
               |               
-              input.form-control(name='username', placeholder='Username', type='text')
+              input.form-control(name='username', placeholder='Username', type='text', required)
               |               
-              input.form-control(name='password', placeholder='Password', type='password')
+              input.form-control(name='password', placeholder='Password', type='password', required)
               |               
               label(for='dp') Birth Date
               |               
-              input#dp1.form-control(type='text', align='middle', value='mm-dd-yyyy', name='dob')
+              input#dp1.form-control(type='text', align='middle', value='mm-dd-yyyy', name='dob', required)
               |               
               button.btn.btn-lg.btn-primary.btn-block(type='submit', value='Submit') Sign Up
     // jQuery
@@ -150,9 +150,7 @@ html(lang='en')
       var firstname = document.forms["signupForm"]["firstname"].value;
       var lastname = document.forms["signupForm"]["lastname"].value;
       var password = document.forms["signupForm"]["password"].value;
-      alert("validation values <br \\>"+" firstname : "+ firstname
-      +"<br />" + " lastname : " + lastname + "<br />" +
-      "password : "+password);
+      
       if (allLetter(firstname))
       {
       alert("Please enter a valid firstname");

@@ -14,6 +14,7 @@ var signup = require('./routes/signup');
 var login = require('./routes/login');
 var tripRequestAccept = require('./routes/tripRequestAccept');
 var friendRequestAccept = require('./routes/friendRequestAccept');
+var editprofile = require('./routes/editprofile');
 
 var session = require('express-session');
 var app = express();
@@ -46,6 +47,7 @@ app.use('/signup', signup);
 app.use('/viewalbums', albumlist);
 app.use('/tripRequestAccept', tripRequestAccept);
 app.use('/friendRequestAccept', friendRequestAccept);
+app.use('/editprofile', editprofile);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

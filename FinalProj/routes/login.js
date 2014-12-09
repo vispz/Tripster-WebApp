@@ -41,7 +41,7 @@ function query_db(req, res, username, password) {
 			// selecting rows
 //			connection.execute("SELECT * FROM users WHERE last_name='" + name + 
 //			"' AND rownum <= 10",
-			var cmd = "SELECT firstname, lastname, photo\_url FROM users " +
+			var cmd = "SELECT firstname, lastname, photo\_url, email, interests, affiliation, dob FROM users " +
 			"WHERE username = '"+username+"' AND password = '"+password+"'";
 			console.log(cmd);
 			connection.execute(cmd, 
@@ -65,7 +65,12 @@ function query_db(req, res, username, password) {
 							console.log("Photo url : ", results[0].PHOTO_URL);
 							req.session.name = username;
 							req.session.firstname = results[0].FIRSTNAME;
+							req.session.lastname = results[0].LASTNAME;
 							req.session.photo_url = results[0].PHOTO_URL;
+							req.session.interests = results[0].INTERESTS;
+							req.session.affiliation = results[0].AFFILIATION;
+							req.session.email = results[0].EMAIL;
+							req.session.dob = results[0].DOB;
 							loadNumOfAttribs(req, res, username);
 							
 						}
@@ -381,8 +386,15 @@ router.post('/', function(req, res) {
 
 router.get('/', function(req, res){
 	
-	console.log('req session in get : ', req.session);
-	if(req.session.name)
+	console.log('\n\n\n\n\n\nreq session in get OF LOGIN : ', req.session);
+	if(req.session.password!==undefined)
+	{
+		console.log('\n\n\n\n\n\nreq session in get OF LOGIN ');
+		password = req.session.password;
+		req.session.password = undefined;
+		query_db(req, res,req.session.username, password);
+	}
+	else if(req.session.name)
 	{
 		console.log("\n\n\nCached defined");
 		loadTripsNewsFeed(res, req, req.session.name, false);
