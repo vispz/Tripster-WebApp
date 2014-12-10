@@ -1,0 +1,29 @@
+extend layout
+block body
+  #page-wrapper(style='padding-top: 10px')
+    .row
+      .col-lg-12
+        .panel.panel-default
+          .panel-heading
+            i.fa.fa-users.fa-fw
+            | Edit Profile
+          // /.panel-heading
+
+          .panel-body
+              each user_i in results.user_results   
+                label Name 
+                  | #{user_i.LASTNAME}
+              
+    script(src='/javascripts/jquery.js')
+    // Bootstrap Core JavaScript
+    script(src='/javascripts/bootstrap.min.js')
+    // Metis Menu Plugin JavaScript
+    script(src='/javascripts/metisMenu.min.js')
+    // Morris Charts JavaScript
+    script(src='/javascripts/raphael.min.js')
+    |     
+    script(src='/javascripts/morris.min.js')
+    |     
+    script(src='/javascripts/morris-data.js')
+    // Custom Theme JavaScript
+    script(src='/javascripts/sb-admin-2.js')
