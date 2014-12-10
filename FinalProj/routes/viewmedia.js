@@ -7,32 +7,171 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
+var username = 'lsn';
+var album_id;
+var photo_id = "51";
+
+//For post request - add comments, ratings to media
+var media_ref;
+var comment;
+var rating;
 
 router.get('/', function(req, res) {
-
-	query_db(res);
-	//res.render('viewmedia');
+	
+	album_id = req.query.albumid;
+	console.log(album_id);
+	getMedia(res, req);
 });
 
-function query_db(res) {
+router.post('/', function(req, res) {
+	//res.send(req.body);
+	album_id = req.body.albumid;
+	media_ref = req.body.photoid;
+	comment = req.body.comments;
+	rating = req.body.ratings;
+	add_comments(res);
+
+	// if (req.body.comments != "") {
+	// 	add_comments(res, req.body.comments, req.body.photoid)
+	// } else if (req.body.ratings != "") {
+	// 	add_rating(res, req.body.ratings, req.body.photoid)
+	// } else {
+	// 	res.render('viewmedia')
+	// }
+});
+
+function add_comments(res) {
 	oracle.connect(connectData, function(err, connection) {
 		if (err) {
 			console.log(err);
 		} else {
-			//connection.execute("SELECT URL FROM MEDIA WHERE LOC_ID = 32 AND TYPE = 'photo'",
-			connection.execute("SELECT M.URL, A.NAME, R.COMMENTS FROM MEDIA M, ALBUMS A, RATE_MEDIA R WHERE M.ALBUM_ID = A.ID AND A.ID = 11 AND R.MEDIA_ID = M.ID ORDER BY A.NAME, M.ID",
+			var cmd = "INSERT INTO RATE_MEDIA(USERNAME, MEDIA_ID, RATING, COMMENTS) VALUES(" + "'" + username + "'" + ", " + media_ref + ", " + rating + ", " + "'" + comment + "'" + ")";
+			connection.execute(cmd,
 				[],
 				function(err, results) {
 					if (err) {
 						console.log(err);
 					} else {
 						connection.close();
-						output_media(res, results);
+						res.redirect('/media?albumid=' + album_id);
 					}
 				});
 		}
 	});
 }
+
+// Original!!!!
+// function query_db(res, req) {
+// 	oracle.connect(connectData, function(err, connection) {
+// 		if (err) {
+// 			console.log(err);
+// 		} else {
+// 			//connection.execute("SELECT URL FROM MEDIA WHERE LOC_ID = 32 AND TYPE = 'photo'",
+// 			connection.execute("SELECT M.ID, M.URL, A.NAME, R.COMMENTS, R.RATING FROM MEDIA M, ALBUMS A, RATE_MEDIA R WHERE M.ALBUM_ID = A.ID AND A.ID = " + album_id + " AND R.MEDIA_ID = M.ID ORDER BY M.ID",
+// 				[],
+// 				function(err, results) {
+// 					if (err) {
+// 						console.log(err);
+// 					} else {
+// 						connection.close();
+// 						output_media(res, results);
+// 					}
+// 				});
+// 		}
+// 	});
+// }
+
+// // How to do 2 queries in one function
+// function query_db(res, req) {
+// 	oracle.connect(connectData, function(err, connection) {
+// 		if (err) {
+// 			console.log(err);
+// 		} else {
+// 			//connection.execute("SELECT URL FROM MEDIA WHERE LOC_ID = 32 AND TYPE = 'photo'",
+// 			connection.execute("SELECT M.ID, M.URL, A.NAME, R.COMMENTS, R.RATING FROM MEDIA M, ALBUMS A, RATE_MEDIA R WHERE M.ALBUM_ID = A.ID AND A.ID = " + album_id + " AND R.MEDIA_ID = M.ID ORDER BY M.ID",
+// 				[],
+// 				function(err, results) {
+// 					if (err) {
+// 						console.log(err);
+// 					} else {
+// 						connection.close();
+// 						var query1 = results;
+// 						output_media(res, results);
+// 					}
+// 				});
+
+// 			connection.execute("SELECT MEDIA_ID, COMMENTS FROM RATE_MEDIA ORDER BY MEDIA_ID",
+// 				[],
+// 				function(err, results) {
+// 					if (err) {
+// 						console.log(err);
+// 					} else {
+// 						connection.close();
+// 						var query2 = results;
+
+// 						output_media(res, results);
+// 					}
+// 				});
+// 		}
+// 	});
+// }
+
+
+function getMedia(res, req) {
+	var cmd = "WITH REQ_MEDIA AS( SELECT M.ID AS MEDIA_ID, M.ALBUM_ID, A.NAME, M.CAPTION, M.URL FROM MEDIA M INNER JOIN ALBUMS A ON A.ID = M.ALBUM_ID WHERE A.ID = " + album_id + ") SELECT Q.CAPTION, Q.URL, Q.ALBUM_ID, Q.NAME, R.MEDIA_ID, AVG(R.RATING) AS AVG_RATING FROM RATE_MEDIA R INNER JOIN REQ_MEDIA Q ON Q.MEDIA_ID = R.MEDIA_ID GROUP BY R.MEDIA_ID, Q.CAPTION, Q.URL, Q.ALBUM_ID, Q.NAME"
+	oracle.connect(connectData, function(err, connection) {
+		if (err) {
+			console.log(err);
+		} else {
+			connection.execute(cmd,
+				[],
+				function(err, results) {
+					if (err) {
+						console.log(err);
+					} else {
+						connection.close();
+						getMediaResults(res, req, results);
+					}
+				});
+		}
+	});
+}
+
+function getMediaResults(res, req, media_results) {
+	var cmd = "WITH REQ_MEDIA AS( SELECT M.ID AS MEDIA_ID, M.ALBUM_ID, A.NAME, M.CAPTION, M.URL FROM MEDIA M INNER JOIN ALBUMS A ON A.ID = M.ALBUM_ID WHERE A.ID = " + album_id + ") SELECT R.MEDIA_ID, U.USERNAME, R.COMMENTS, U.FIRSTNAME, U.LASTNAME FROM RATE_MEDIA R INNER JOIN REQ_MEDIA Q ON R.MEDIA_ID = Q.MEDIA_ID INNER JOIN USERS U ON U.USERNAME = R.USERNAME";
+	oracle.connect(connectData, function(err, connection) {
+		if (err) {
+			console.log(err);
+		} else {
+			connection.execute(cmd,
+				[],
+				function(err, results) {
+					if (err) {
+						console.log(err);
+					} else {
+						connection.close();
+						var media_results_info = results;
+						for (var i = 0; i < media_results.length; i ++) {
+							media_results[i].comments = [];
+						}
+
+						for (var i = 0; i < media_results.length; i ++) {
+							for(var j = 0; j <media_results_info.length; j++) {
+								if(media_results[i].MEDIA_ID==media_results_info[j].MEDIA_ID) {
+									media_results[i].comments.push(media_results_info[j]);
+								}
+							}
+						}
+
+						output_media(res, media_results);
+
+
+					}
+				});
+		}
+	});
+}
+
 
 function output_media(res, results) {
 	res.render('viewmedia', {result: results});

@@ -1,8 +1,22 @@
 var express = require('express');
 var router = express.Router();
+var connectData = {
+	hostname: "cis550.c9yomnhycrjl.us-west-2.rds.amazonaws.com",
+	port: "1521",
+	user:"visp",
+	password: "foreignkey99",
+	database: "TRIPSTER"};
+var oracle = require("oracle");
+var username = 'lsn';
+var trip_id;
+var albumname;
+var privacy;
+var new_album_id;
 
 router.get('/', function(req, res) {
-	res.render('createalbum');
+	trip_id = req.query.trip_id;
+	//res.send(trip_id)
+	res.render('createalbum', {TRIP_ID: trip_id});
 });
 
 // This method is responsible for when user clicks create album button.
@@ -10,12 +24,43 @@ router.get('/', function(req, res) {
 // For now, I'm just printing to the screen the new album information.
 // Still need to know how to get username and trip_id to save new album instance.
 router.post('/', function(req, res) {
-	var albumName = req.body.albumname;
-	var privacy = req.body.privacy;
-	var html = 'The new album is titled ' + albumName +
-	'and its privacy is set to ' + privacy;
-
-	res.send(html);
+	trip_id = parseInt(req.body.trip_id);
+	albumname = req.body.albumname;
+	privacy = req.body.privacy;
+	//res.send(req.body);
+	query_db(res, req);
 });
+
+
+function query_db(res, req) {
+	oracle.connect(connectData, function(err, connection) {
+		if (err) {
+			console.log(err);
+		} else {
+			//connection.execute("SELECT URL FROM MEDIA WHERE LOC_ID = 32 AND TYPE = 'photo'",
+			connection.execute("SELECT MAX(ID) AS MAX FROM ALBUMS",
+				[],
+				function(err, results) {
+					if (err) {
+						console.log(err);
+					} else {
+						connection.close();
+						new_album_id = parseInt(JSON.stringify(results[0].MAX)) + 1;
+					}
+				});
+
+			connection.execute("INSERT INTO ALBUMS VALUES(" + new_album_id + ", " + albumname + ", " + username + ", " + trip_id + ", " + privacy +  ");",
+				[],
+				function(err, results) {
+					if (err) {
+						console.log(err);
+					} else {
+						connection.close();
+						res.redirect('/viewalbums');
+					}
+				});
+		}
+	});
+}
 
 module.exports = router;

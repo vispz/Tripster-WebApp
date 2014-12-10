@@ -6,11 +6,13 @@ html
     meta(name="viewport", content="width=device-width, initial-scale=1")
     meta(name="description", content="")
     meta(name="author", content="")
-    title= "Tripster - View Albums"
+    title= "Tripster - View Album Photos"
     // Bootstrap Core CSS
     link(href="/stylesheets/bootstrap.min.css", rel="stylesheet")
+    link(href="/stylesheets/thumbnail-gallery.css" rel="stylesheet")
 
-  body(style='padding-top: 70px')
+
+  body
     // Navigation
     nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
       .container
@@ -31,10 +33,18 @@ html
               a(href='#') My Account
         // /.navbar-collapse
       // /.container
-    table
-      for albums in result
-        tr
-          td 
-            a(href='/media' + '?albumid=' + albums.ID)
-              h3 #{albums.NAME}
-    a.btn.btn-success.btn-large(href='/album?trip_id=#{result[0].TRIP_ID}') Add An Album
+    // Page Content
+    h2 Add Media
+    form(method='post' action='/addmedia')
+      input#albumid(name='albumid', value=album, style='display:none')
+      input#mediaurl.input-xlarge(name='imageurl', type='text', placeholder='Media URL', size='60')
+      br
+      input#caption.input-xlarge(name='caption', type='text', placeholder='Add a caption', size='75')
+      br
+      label(for='photo' style='margin-right:5px;') photo
+        input#photo(type='radio', name='type', value='photo' style='margin-right:10px;')
+      br
+      label(for='video' style='margin-right:5px;') video
+        input#video(type='radio', name='type', value='video' style='margin-right:10px;')
+      br
+      input(type='submit', value='submit')
