@@ -19,7 +19,6 @@ var rating;
 router.get('/', function(req, res) {
 	
 	album_id = req.query.albumid;
-	console.log(album_id);
 	getMedia(res, req);
 });
 
@@ -131,7 +130,6 @@ function getMedia(res, req) {
 						console.log(err);
 					} else {
 						connection.close();
-						console.log("getMedia return this: " + JSON.stringify(results));
 						getMediaResults(res, req, results);
 					}
 				});
@@ -152,7 +150,6 @@ function getMediaResults(res, req, media_results) {
 						console.log(err);
 					} else {
 						connection.close();
-						console.log("getMediaResults returns this: " + JSON.stringify(results));
 						var media_results_info = results;
 						for (var i = 0; i < media_results.length; i ++) {
 							media_results[i].comments = [];
@@ -165,7 +162,6 @@ function getMediaResults(res, req, media_results) {
 								}
 							}
 						}
-						console.log("merged results is: " + JSON.stringify(media_results));
 						output_media(res, media_results);
 
 
