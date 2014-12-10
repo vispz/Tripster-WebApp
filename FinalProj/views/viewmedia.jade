@@ -47,7 +47,7 @@ html
                 div.modal-content
                   div.modal-header
                     button.close(type='button', data-dismiss='modal', aria-hidden=true)
-                    h4#MyModalLabel.modal-title About This Photo:
+                    h4#MyModalLabel.modal-title About This Photo: 
                   div.modal-body
                     h4 Comments on This Photo
                     div#commentArea
@@ -91,8 +91,9 @@ html
             $("#commentArea").append("<p>" + comments[i].COMMENTS + "</p> <h5>" +  "-by " + comments[i].FIRSTNAME + " " + comments[i].LASTNAME + "</h5><br>");
           }
           $("#ratingArea").append("<p>" + allImageInfo.AVG_RATING + "</p><br>");
-          $("#hidden1").attr('value', allImageInfo.MEDIA_ID)
-          $("#hidden2").attr('value', allImageInfo.ALBUM_ID)
+          $("h4#MyModalLabel").append(allImageInfo.CAPTION);
+          $("#hidden1").attr('value', allImageInfo.MEDIA_ID);
+          $("#hidden2").attr('value', " " + allImageInfo.ALBUM_ID);
         });
         $('.btn-default').on('click', function(event) {
           event.preventDefault();

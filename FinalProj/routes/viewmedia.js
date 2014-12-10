@@ -118,7 +118,8 @@ function add_comments(res) {
 
 
 function getMedia(res, req) {
-	var cmd = "WITH REQ_MEDIA AS( SELECT M.ID AS MEDIA_ID, M.ALBUM_ID, A.NAME, M.CAPTION, M.URL FROM MEDIA M INNER JOIN ALBUMS A ON A.ID = M.ALBUM_ID WHERE A.ID = " + album_id + ") SELECT Q.CAPTION, Q.URL, Q.ALBUM_ID, Q.NAME, R.MEDIA_ID, AVG(R.RATING) AS AVG_RATING FROM RATE_MEDIA R INNER JOIN REQ_MEDIA Q ON Q.MEDIA_ID = R.MEDIA_ID GROUP BY R.MEDIA_ID, Q.CAPTION, Q.URL, Q.ALBUM_ID, Q.NAME"
+	var cmd = "WITH REQ_MEDIA AS( SELECT M.ID AS MEDIA_ID, M.ALBUM_ID, A.NAME, M.CAPTION, M.URL FROM MEDIA M INNER JOIN ALBUMS A ON A.ID = M.ALBUM_ID WHERE A.ID = " + album_id + ") SELECT Q.CAPTION, Q.URL, Q.ALBUM_ID, Q.NAME, Q.MEDIA_ID, AVG(R.RATING) AS AVG_RATING FROM REQ_MEDIA Q LEFT JOIN RATE_MEDIA R ON Q.MEDIA_ID = R.MEDIA_ID GROUP BY Q.MEDIA_ID, Q.CAPTION, Q.URL, Q.ALBUM_ID, Q.NAME"
+	//var cmd = "SELECT M.ID AS MEDIA_ID, M.ALBUM_ID, A.NAME, M.CAPTION, M.URL FROM MEDIA M INNER JOIN ALBUMS A ON A.ID = M.ALBUM_ID WHERE A.ID = " + album_id + ")";
 	oracle.connect(connectData, function(err, connection) {
 		if (err) {
 			console.log(err);
@@ -130,6 +131,7 @@ function getMedia(res, req) {
 						console.log(err);
 					} else {
 						connection.close();
+						console.log("getMedia return this: " + JSON.stringify(results));
 						getMediaResults(res, req, results);
 					}
 				});
@@ -150,6 +152,7 @@ function getMediaResults(res, req, media_results) {
 						console.log(err);
 					} else {
 						connection.close();
+						console.log("getMediaResults returns this: " + JSON.stringify(results));
 						var media_results_info = results;
 						for (var i = 0; i < media_results.length; i ++) {
 							media_results[i].comments = [];
@@ -162,7 +165,7 @@ function getMediaResults(res, req, media_results) {
 								}
 							}
 						}
-
+						console.log("merged results is: " + JSON.stringify(media_results));
 						output_media(res, media_results);
 
 
@@ -174,8 +177,15 @@ function getMediaResults(res, req, media_results) {
 
 
 function output_media(res, results) {
-	res.render('viewmedia', {result: results});
-	//res.send(results)
+	if (are_results_empty(results)) {
+		res.redirect('/addmedia?albumid=' + album_id);
+	} else {
+		res.render('viewmedia', {result: results});
+	}
+}
+
+function are_results_empty(results) {
+	return !Object.keys(results).length;
 }
 
 module.exports = router;
