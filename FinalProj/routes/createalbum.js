@@ -28,11 +28,11 @@ router.post('/', function(req, res) {
 	albumname = req.body.albumname;
 	privacy = req.body.privacy;
 	//res.send(req.body);
-	query_db(res, req);
+	getNewAlbumID(res, req);
 });
 
 
-function query_db(res, req) {
+function getNewAlbumID(res, req) {
 	oracle.connect(connectData, function(err, connection) {
 		if (err) {
 			console.log(err);
@@ -46,17 +46,27 @@ function query_db(res, req) {
 					} else {
 						connection.close();
 						new_album_id = parseInt(JSON.stringify(results[0].MAX)) + 1;
+						create_album(res);
 					}
 				});
+		}
+	});
+}
 
-			connection.execute("INSERT INTO ALBUMS VALUES(" + new_album_id + ", " + albumname + ", " + username + ", " + trip_id + ", " + privacy +  ");",
-				[],
+function create_album(res) {
+	oracle.connect(connectData, function(err, connection) {
+		if (err) {
+			console.log(err);
+		} else {
+			var cmd = "INSERT INTO ALBUMS(ID, NAME, USERNAME, TRIP_ID, PRIVACY) VALUES(" + new_album_id + ", '" + albumname + "', '" + username + "', " + trip_id + ", '" + privacy +  "')";
+			connection.execute(cmd,
+				[], 
 				function(err, results) {
 					if (err) {
 						console.log(err);
 					} else {
 						connection.close();
-						res.redirect('/viewalbums');
+						res.redirect('/viewalbums?trip_id=' + trip_id);
 					}
 				});
 		}
