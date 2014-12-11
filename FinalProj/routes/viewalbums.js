@@ -7,9 +7,10 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
+var trip_id = 90; //Nivedita needs to pass me the trip id from her page.
 
 router.get('/', function(req, res) {
-
+	//trip_id = req.query.tripid; //Uncomment and remove hardcoded value once trips and albums are merged.
 	query_db(res);
 });
 
@@ -18,7 +19,7 @@ function query_db(res) {
 		if (err) {
 			console.log(err);
 		} else {
-			connection.execute("SELECT NAME FROM ALBUMS",
+			connection.execute("SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id,
 				[],
 				function(err, results) {
 					if (err) {

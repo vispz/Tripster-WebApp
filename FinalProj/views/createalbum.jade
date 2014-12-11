@@ -35,9 +35,11 @@ html
           label.control-label(for='privacy') Privacy Setting:
           .controls
             select#privacy.input-xlarge(name='privacy')
-              option Private
-              option Shared with Trip Participants
-              option Public
+              option private
+              option sharedWithTripMembers
+              option public
+          .controls
+            input#tripid(name='trip_id', value=TRIP_ID, style='display:none')
         // Button
         .control-group
           label.control-label(for='createAlbum')
