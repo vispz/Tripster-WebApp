@@ -9,7 +9,6 @@ var connectData = {
 var oracle = require("oracle");
 var username = 'lsn';
 var album_id;
-var photo_id = "51";
 
 //For post request - add comments, ratings to media
 var media_ref;
