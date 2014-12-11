@@ -12,6 +12,7 @@ var albumlist = require('./routes/viewalbums');
 var addmedia = require('./routes/addmedia');
 var users = require('./routes/users');
 var login = require('./routes/login');
+var recommend = require("./routes/recommend");
 
 
 var app = express();
@@ -35,6 +36,7 @@ app.use('/media', media);
 app.use('/login', login);
 app.use('/viewalbums', albumlist);
 app.use('/addmedia', addmedia);
+app.use('/rec', recommend);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
