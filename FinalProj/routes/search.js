@@ -95,8 +95,8 @@ function query_trips(res, req)
 {
     if(!req.query.trip_search)
     {
-
-      res.render( 'searchResults.jade',{results:results});
+      res.send(results);
+      // res.render( 'searchResults.jade',{results:results});
     }
     else
     {
@@ -136,8 +136,8 @@ function query_trips(res, req)
 
                   var a = {results: results};
                   console.log(a);
-
-                  res.render( 'searchResults.jade',{results:results});
+                  res.send(results);
+                  // res.render( 'searchResults.jade',{results:results});
 
                 }
               });

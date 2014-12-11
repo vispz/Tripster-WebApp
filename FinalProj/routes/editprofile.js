@@ -19,6 +19,7 @@ router.get('/', function(req, res) {
 	
 	console.log('In get editprofile');
 	var retVal = { results: req.session};
+	console.log("RETVAL",retVal);
   	res.render('editprofile.jade', retVal);
 });
 
@@ -41,8 +42,10 @@ function saveData(req,res)
 					" affiliation, interests, photo_url ) values( "+ 
 					"";
 			else
-
+			console.log("\n\n\n\n\n\n\n\n\n\n\n");
 			console.log(cmd);
+			console.log("\n\n\n\n\n\n\n\n\n\n\n");
+			
 			connection.execute(cmd, 
 						[], 
 				function(err, userDetails) 

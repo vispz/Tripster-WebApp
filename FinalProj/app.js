@@ -20,6 +20,8 @@ var search = require('./routes/search');
 var mytrips=require('./routes/mytrips');
 var createTrip=require('./routes/createTrip');
 var tripspage=require('./routes/tripspage');
+var saveNewUserData=require('./routes/saveNewUserData');
+
 
 var session = require('express-session');
 var app = express();
@@ -58,6 +60,8 @@ app.use('/editprofile', editprofile);
 app.use('/search', search);
 app.use('/tripspage',tripspage);
 app.use('/addmedia', addmedia);
+app.use('/saveNewUserData', saveNewUserData);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
