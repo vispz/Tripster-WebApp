@@ -7,9 +7,11 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
+var username;
 var trip_id;
 
 router.get('/', function(req, res) {
+	username = req.session.name;
 	trip_id = req.query.tripid;
 	query_db(res);
 });
@@ -19,7 +21,7 @@ function query_db(res) {
 		if (err) {
 			console.log(err);
 		} else {
-			connection.execute("SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id + " AND PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers'",
+			connection.execute("SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id + " AND PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + username + "'",
 				[],
 				function(err, results) {
 					if (err) {
