@@ -5,15 +5,17 @@ body {
   margin-left: 40px;
   
 }
-.invitation{
-  margin-left:1250px;
+.invites{
+  height:400px;
+  width:400px;
+  border:10px;
+  margin-left:600px;
   margin-bottom:10px;
   
 }
-.invitation input {
-  height:40px;
-  width:100px;
-  border:10px;
+body .invites .container .form-horizontal fieldset control-group .controls select{
+  width:600px;
+  height:600px;
 }
 
 .album{
@@ -59,14 +61,7 @@ color: #3366ff;
 
 }
 
-.container  {
-  margin-right: 10px;
-  margin-left: 10px;
-  margin-bottom: 10px;
-  margin-top:10px;
-  border-style: groove;
-    border-color: #3366ff;
-}
+
 
 .controls label {
     display: inline-block;

@@ -11,7 +11,7 @@ var connectData = {
 var tripid;
 /*get the mytrips page*/
 router.get('/',function(req,res){
-
+    
    admin = req.session.name;
    // console.log("\n\n\n\n\n\n\n\n----------------------------\n\n\nADMIN NAME");
    // console.log("\n\");

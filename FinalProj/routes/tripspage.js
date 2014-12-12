@@ -13,22 +13,128 @@ var admin;
 
 /*get the mytrips page*/
 router.get('/',function(req,res){
-    //var tripid = res.query.tripid;
+
    tripid = req.query.tripid;
    admin = req.session.name;
+
    // admin = 'FSpagMon';
-    
-    console.log(tripid);
-    console.log(req.query.tripid);
-    gettripdata(res);
+   checkadminstatus(res);
+
     });
 
 router.post('/', function(req,res) {
-    console.log(req.body);
+    
     getrating(res,req);
     getcomments(res,req);
+    getinvite(res,req);
     
 });
+
+function checkadminstatus(res){
+    var tripadmin;
+    var privacysetting;
+    var myquery = "SELECT T.ADMIN AS ADMINTRIP, T.PRIVACY AS PRIVACY FROM TRIPS T WHERE T.ID="+tripid;
+    console.log(myquery);
+    oracle.connect(connectData, function(err, connection) {
+            if (err) { console.log("Error connecting to db:", err); return; }
+            connection.execute(myquery, [], function(err,results) {
+                if(err) {console.log("Error executing query: ",err); return;}
+                console.log(results);
+                connection.close();
+                privacysetting = results[0].PRIVACY;
+                tripadmin = results[0].ADMINTRIP;
+                console.log("tripadmin");
+                console.log(tripadmin);
+                console.log("admin");
+                console.log(admin);
+                if(admin===undefined) {
+                    res.redirect('/login');
+                }
+                if(tripadmin==admin){
+                     
+                            gettripdata(res);
+                }
+                else {
+                    console.log(checkmemberstatus);
+                    console.log(admin);
+                    checkmemberstatus(res,privacysetting);
+                }
+
+                
+                
+            });
+    });
+    
+    
+}
+function checkmemberstatus(res,privacysetting) {
+    var tripadmin;
+    
+    var myquery = "SELECT P.USERNAME AS MEMBERS, P.RSVP AS RSVP FROM PARTICIPATES P WHERE (P.RSVP = 'pending' OR P.RSVP='accepted') AND P.TRIP_ID="+tripid;
+    console.log(myquery);
+    oracle.connect(connectData, function(err, connection) {
+            if (err) { console.log("Error connecting to db:", err); return; }
+            connection.execute(myquery, [], function(err,results) {
+                if(err) {console.log("Error executing query: ",err); return;}
+                console.log(results);
+                connection.close();
+                console.log(privacysetting);
+                
+
+                if(privacysetting =="sharedByTripMembers"){
+                    console.log("inside sharedbytripmembers");
+                    var member = false;
+                    for(i=0; i<results.length; i++){
+
+                        if (results[i].MEMBERS==admin){
+                            member = true;
+                            gettripdata(res);
+                        }
+                    }
+                    if (member==false){
+                        res.redirect('/login');
+                    }
+
+                }
+                else if(privacysetting =="private"){
+                    console.log("inside private");
+                    var member = false;
+                    var memberindex;
+                    for(i=0; i<results.length; i++){
+                        if (results[i].MEMBERS==admin){
+                            console.log("member set to true");
+                            member = true;
+                            memberindex=i;
+                            break;
+                        }
+                    }
+                    if(member==true){
+                        
+                        if(results[memberindex].RSVP=="accepted"){
+                             gettripdata(res);
+                             console.log("going to get trip data");
+                        }
+                        else {
+                        res.redirect('/login');
+                        }
+                    } else {
+                        res.redirect('/login');
+                    }
+                    
+                }
+                
+                else if (privacysetting=="public"){
+                    console.log("inside public");
+                    gettripdata(res);
+                }
+                else {
+                    console.log("inside redirection");
+                    res.redirect('/login');
+                }
+            });
+    });
+
+}
 
 function gettripdata(res){
 
@@ -41,13 +147,32 @@ function gettripdata(res){
                 if(err) {console.log("Error executing query: ",err); return;}
                 console.log(results);
                 connection.close();
-                getcommentdata(res,results);
+                getuserdata(res,results);
             });
     });
 
 }
 
-function getcommentdata(res,tripresults) {
+function getuserdata(res,tripresults){
+    var myquery = "SELECT DISTINCT U.FIRSTNAME, U.LASTNAME, U.USERNAME FROM USERS U  INNER JOIN FRIENDS F ON F.USERNAME2 = U.USERNAME" +
+                  " WHERE F.USERNAME1='"+admin+"'"+
+                  " MINUS"+
+                   " SELECT DISTINCT U.FIRSTNAME, U.LASTNAME, U.USERNAME FROM USERS U"+
+                   " INNER JOIN PARTICIPATES P ON P.USERNAME=U.USERNAME"+
+                    " WHERE P.TRIP_ID ="+tripid;
+    console.log(myquery);
+    oracle.connect(connectData, function(err, connection) {
+            if (err) { console.log("Error connecting to db:", err); return; }
+            connection.execute(myquery, [], function(err,results) {
+                if(err) {console.log("Error executing query: ",err); return;}
+                console.log(results);
+                connection.close();
+                getcommentdata(res,tripresults,results);
+            });
+    });
+}
+
+function getcommentdata(res,tripresults,userresults) {
 
     var myquery = " SELECT U.FIRSTNAME AS FIRSTNAME, U.LASTNAME, U.PHOTO_URL, P.COMMENTS, T.NAME  FROM USERS U "+ 
     " INNER JOIN PARTICIPATES P ON U.USERNAME=P.USERNAME INNER JOIN TRIPS T ON T.ID=P.TRIP_ID " +" WHERE (P.TRIP_ID=" +tripid+
@@ -59,19 +184,15 @@ oracle.connect(connectData, function(err, connection) {
         if(err) {console.log("Error executing query: ",err); return;}
         console.log(results);
         connection.close();
-        getmembers(res,tripresults,results);
+        getmembers(res,tripresults,userresults,results);
 
     });
 });
 }
 
-function gettripspage(res,tripresults,commentresults,memberresults) {
-    res.render('tripspage', { result: commentresults, title: tripresults[0].NAME, tid: tripid, mem: memberresults, username: admin, rate: Math.round(tripresults[0].AVERAGE)});
-    
-}
 
-function getmembers(res,tripresults,commentresults){
-        var myquery = "SELECT U.FIRSTNAME, U.LASTNAME, U.USERNAME FROM USERS U INNER JOIN PARTICIPATES P ON P.USERNAME=U.USERNAME WHERE P.TRIP_ID="+tripid;
+function getmembers(res,tripresults,userresults,commentresults){
+        var myquery = "SELECT U.FIRSTNAME, U.LASTNAME, U.USERNAME, P.RSVP AS RSVP FROM USERS U INNER JOIN PARTICIPATES P ON P.USERNAME=U.USERNAME WHERE P.TRIP_ID="+tripid;
         console.log(myquery);
     oracle.connect(connectData, function(err, connection) {
         if (err) { console.log("Error connecting to db:", err); return; }
@@ -79,12 +200,20 @@ function getmembers(res,tripresults,commentresults){
             if(err) {console.log("Error executing query: ",err); return;}
             console.log(results);
             connection.close();
-            gettripspage(res,tripresults,commentresults,results);
+            gettripspage(res,tripresults,userresults,commentresults,results);
         });
     });
 }
+function gettripspage(res,tripresults,userresults,commentresults,memberresults) {
+    if (Object.keys(tripresults).length>0){
+    res.render('tripspage', { result: commentresults, title: tripresults[0].NAME, tid: tripid, friends: userresults, mem: memberresults, username: admin, rate: Math.round(tripresults[0].AVERAGE)});
+    } else {
+        res.redirect('/login');
+    }
+}
 
 function getrating(res,req){
+    console.log("getrating was called");
 if (req.body.rating) {
     var rate = req.body.rating;
     var myquery = "UPDATE PARTICIPATES SET RATE="+rate+" WHERE USERNAME='"+admin+"'"+ " AND TRIP_ID="+tripid;
@@ -95,6 +224,7 @@ if (req.body.rating) {
                 if(err) {console.log("Error executing query: ",err); return;}
                 console.log(results);
                 connection.close();
+                gettripdata(res);
             });
     });
 }
@@ -102,6 +232,7 @@ if (req.body.rating) {
 }
 
 function getcomments(res,req) {
+     console.log("getcomments was called");
 if (req.body.comment){
     var comment = req.body.comment;
     var myquery = "UPDATE PARTICIPATES SET COMMENTS='"+comment+"' WHERE USERNAME='"+admin+"' "+ "AND TRIP_ID="+tripid;
@@ -117,5 +248,73 @@ if (req.body.comment){
     });
 }
 }
+function getinvite(res,req) {
+    console.log("function goes to send invite!");
+    if(req.body.selectfriends){
+        console.log("function selects the friends");
+        //var members = req.query.mem;
+       
+        var friendlist=[];
+        var friendname = req.body.selectfriends;
+        console.log(friendname);
+        if (friendname){
+        if(friendname.constructor === Array) {
+            for (i=0; i<friendname.length; i++)
+            {
+                if(friendname[i]){
+                    var name = friendname[i].split("-");
+                    friendlist.push(name[1]);
+                    console.log(name[1]);
+                }
+            }
+  
+        } else {
+            var name = friendname.split("-");
+            friendlist.push(name[1]);
+            console.log(name[1]);
+        }
+
+      /*  for (i=0; i<members.length; i++){
+            var index = friendlist.indexOf(search_term);    // <-- Not supported in <IE9
+            if (index !== -1) {
+                friendlist.splice(index, 1);
+            }       
+        }*/
+        console.log(friendlist);
+        insertparticipates(res,req,friendlist,0);
+
+        } else gettripdata(res);
+    } 
+}
+function insertparticipates(res,req,friendlist,index) {
+    var len = friendlist.length;
+    if (index==len) return;
+    oracle.connect(connectData, function(err,connection)
+            {
+               
+                if (err) { console.log("Error connecting to db:", err); return;}
+                  
+                        var newparticipant= "INSERT INTO PARTICIPATES(USERNAME, TRIP_ID,COMMENTS, RSVP,RATE) VALUES ('"
+                        + friendlist[index] + "', " + tripid + ", " +null+ ", 'pending'" +", "+1+")" ;
+
+                        console.log(newparticipant);
+                        connection.execute(newparticipant,[],function(err,results)
+                            {
+                            if(err) {console.log("Error executing participates query: ",err); return;}
+                            console.log(results); 
+                            connection.close();
+                            console.log("inserted 1 PARTICIPANT successfully!");
+                            insertparticipates(res,req,friendlist,++index);
+                            if(index==friendlist.length)
+                                    gettripdata(res);
+                             }); //end of connection to participates
+                     
+                 
+                    
+            });
+
+    
+}
+
 
 module.exports=router;

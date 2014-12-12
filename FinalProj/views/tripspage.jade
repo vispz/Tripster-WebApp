@@ -23,18 +23,21 @@ html
     .nav
       .container-fluid
         .navbar-header
-          a.navbar-brand(href='/login?username=lsn&password=password') Tripster
+          a.navbar-brand(href='/login') Tripster
         |         
         .pull-right
           ul.nav.navbar-nav
             li.active
               a(href='/mytrips') My Trips
+            li
+              a(href='/album') Create Album
+            li
+              a(href='#invite') Invite Friends
             
     // heading
     .header
       h1 #{title}
-    .invitation
-      input(type='submit',value='Invite Friends!', method='POST')
+    
     // rating trip
     //Radio button template used from www.bootsnipp.com/forms
     .row
@@ -77,15 +80,18 @@ html
               label.control-label(for='ratebutton')
               |   
               .controls
-                input(type='submit', value='Rate it!') 
+                input(type='submit', value='Rate it!')
       |       
       .col-md-6
         form.form-horizontal
           fieldset
             legend Trip Rating : #{rate} / 5
+      
+        
 
     // end of row
     // blocking the data
+
     .row
       .col-md-4
         .album
@@ -114,7 +120,7 @@ html
                   .commentText
                     p #{comm.COMMENTS}
                     |  
-                    span.person by #{comm.FIRSTNAME} #{comm.LASTNAME}
+                    span.person by #{comm.FIRSTNAME} #{comm.LASTNAME} 
               
             |           
             form.form-inline(method='POST')
@@ -132,6 +138,28 @@ html
             label Trip Members
                 for member in mem
                   tr
-                    td #{member.FIRSTNAME} #{member.LASTNAME} 
+                    td #{member.FIRSTNAME} #{member.LASTNAME} (#{member.RSVP})
 
     // end of row 2
+    .invites
+      form.form-horizontal(method='post', action='/tripspage?tripid=#{tid}')
+        fieldset
+          // Form Name
+          legend Invite Friends
+          // Select Multiple
+          .control-group
+            label.control-label(for='selectfriends') Select:
+            |   
+            .controls
+              select.input-xlarge( name='selectfriends', multiple='multiple')
+                for friend in friends
+                  option #{friend.FIRSTNAME} #{friend.LASTNAME}  -#{friend.USERNAME}
+          .control-group
+                label.control-label(for='invite')
+                |   
+                .controls
+                  button#invite.btn.btn-primary(type='submit', name='invite') Invite!
+       
+
+
+    a(name='invite')
