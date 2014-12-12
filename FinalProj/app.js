@@ -21,6 +21,7 @@ var mytrips=require('./routes/mytrips');
 var createTrip=require('./routes/createTrip');
 var tripspage=require('./routes/tripspage');
 var saveNewUserData=require('./routes/saveNewUserData');
+var yelp = require('./routes/yelp');
 
 
 var session = require('express-session');
@@ -61,6 +62,7 @@ app.use('/search', search);
 app.use('/tripspage',tripspage);
 app.use('/addmedia', addmedia);
 app.use('/saveNewUserData', saveNewUserData);
+app.use('/yelp', yelp);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
