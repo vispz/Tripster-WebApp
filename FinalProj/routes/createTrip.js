@@ -11,7 +11,7 @@ var connectData = {
 
 var locidlist=[];
 var check=-1;
-var admin = 'FSpagMon';
+var admin ;
 var tripid;
 var maxlocid;
 var locid;
@@ -19,7 +19,7 @@ var triplocations=[];
 var newid=[];
 /*get the createTrip page*/
 router.get('/',function(req,res){
-   // admin = req.session.name;
+   admin = req.session.name;
 	getdata(res,req);
 
 });
@@ -297,66 +297,6 @@ function addtriplocation(res,req,index,loclist){
 
 
 
-/*
-
-function addnewlocations(res,req,newloc) {
-    if (newloc) {
-    var loc_id =locid;
-        console.log("addnewlocations:");
-        console.log(newloc.length);
-        var len=newloc.length;
-        for(i=0; i<len; i++){
-            console.log(newloc[i]);
-            loc_id++;
-            var insertquery = "INSERT INTO LOCATION(ID, NAME) VALUES("+loc_id+", '"+newloc[i]+"')";
-            console.log(insertquery);
-            oracle.connect(connectData, function(err,connection)
-            {
-                if (err) { console.log("Error connecting to db:", err); return;}
-                connection.execute(insertquery,[], function(err,results) 
-                {  
-                    if(err)  {console.log("Error executing query: ",err); return;}
-                    console.log(results);
-                    connection.close();
-                    console.log("added 1 location successfully!");
-                });
-            });
-
-        }
-
-        console.log("all locations inserted in the location table!");
-    }
-        addinglocid(res,req);
-}
-*/
-/*
-function addlocation(location,loc_id){
-
-    console.log("addlocation");
-    var insertquery = "INSERT INTO LOCATION(ID, NAME) VALUES("+loc_id+", '"+location+"')";
-    console.log(insertquery);
-    oracle.connect(connectData, function(err,connection)
-        {
-            if (err) { console.log("Error connecting to db:", err); return;}
-            connection.execute(insertquery,[], function(err,results) 
-            {
-                   
-                    if(err)  {console.log("Error executing query: ",err); return;}
-                    console.log(results);
-                    connection.close();
-                    console.log("added 1 location successfully!");
-            });
-
-        
-        });
-
-
-}
-
-
-*/
-
-
 
 function inserttriplocations(res,req,locationlist){
     for (i=0 ; i<locationlist.length; i++) {
@@ -380,26 +320,7 @@ function inserttriplocations(res,req,locationlist){
         }
 }
 
-/*
 
-function insertloc(locid) {
-var insertquery = "INSERT INTO TRIP_LOCATION(TRIP_ID,LOC_ID) VALUES ("+ tripid + ", "+locid+")";
-console.log(insertquery);
- oracle.connect(connectData, function(err,connection)
-    {
-        if (err) { console.log("Error connecting to db:", err); return;}
-             connection.execute(insertquery,[], function(err,results)
-                {
-                    
-                    if(err)  {console.log("Error executing query: ",err); return;}
-                    console.log(results);
-                    connection.close();
-                    console.log("inserted 1 TRIP LOCATION successfully!");
-                });
-    });
-
-}
-*/
 /*method to check friends who are going to the trip and inserting username in an array*/
 function findfriends(res,req){
     console.log("find friends");
