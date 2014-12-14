@@ -255,7 +255,7 @@ function addToCache(res,req,db,results,index ) {
                     console.log("FILEID : ", fileId);
                     console.log("URLM : ", urlm);
                     var gridStore = new GridStore(db, fileId, 'w');
-
+                    gridStore.chunkSize = 1024 * 256;
                     // Open the file
                     gridStore.open(function(err, gridStore) {
                         console.log("gridstore open!");
@@ -307,6 +307,9 @@ function addToCache(res,req,db,results,index ) {
                                 });
                             });
                         });
+                    }).on('error', function(e) {
+                        console.log("Got error: " + e.message);
+                        wrapmedia(res, req, results, index + 1);
                     });
             });
 
