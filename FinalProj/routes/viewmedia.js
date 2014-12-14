@@ -28,7 +28,7 @@ var Db = require('mongodb').Db,
 var sys = require('sys');
 var base64_encode = require('base64').encode;
 var Buffer1 = require('buffer').Buffer;
-
+var http = require('http');
 var request = require('request');
 
 //For post request - add comments, ratings to media
@@ -228,14 +228,13 @@ function getcache(res,req,db,results,index) {
                         console.log('Done');
 
                         hasImage = true;
-                        results[index].image =fileData.toString('base64'); //setting the image in the JSON
-                         console.log(typeof(fileData));
-                        results[index].hasImage = hasImage; //setting the property that the JSON contains the image at the index
+                        results[index].image ="data:image/jpeg;base64,"+fileData.toString('base64'); //setting the image in the JSON
+                        results[index].hasImage = true; //setting the property that the JSON contains the image at the index
                         //res.write(fileData, 'binary');
                         //res.end(fileData,'binary');
                         //console.log(fileData);
                         //console.log('Really done');
-
+                        console.log(results[index].image);
                         db.close(); //i have obtained the cached data and i close the database
                         wrapmedia(res, req, results, index + 1);
 
@@ -250,7 +249,7 @@ function addToCache(res,req,db,results,index ) {
  var hasImage;
                     hasImage = false;
                     results.image = null;
-                    results.hasImage = hasImage; //setting the property that the JSON  doesn't contain the image at the index
+                    results.hasImage = false; //setting the property that the JSON  doesn't contain the image at the index
                     var fileId = results[index].MEDIA_ID.toString();
                     var urlm = results[index].URL;
                     console.log("FILEID : ", fileId);
@@ -260,12 +259,21 @@ function addToCache(res,req,db,results,index ) {
                     // Open the file
                     gridStore.open(function(err, gridStore) {
                         console.log("gridstore open!");
-                        request(urlm, function(error, response, body) {
+                        http.get(urlm, function(response) {
                             //this is the http request and we get a response and the body
+                            response.setEncoding('binary');
+                            var image2 = '';
                             console.log(urlm);
+                            console.log('reading data in chunks first');
+                                response.on('data', function(chunk){
+                                      image2 += chunk;
+                                    console.log('reading data');
+                                  });
+                                
+                                response.on('end', function() {
 
                             console.log("requesting HTTTP DONE!");
-                            var image = new Buffer(body, 'binary'); //we take this body in binary form 
+                            var image = new Buffer(image2, 'binary'); //we take this body in binary form 
                             console.log("CONVERTING FILE TO BINARY, DONE!");
                             // Write some data to the file
                             gridStore.write(image, function(err, gridStore) { // the opened gridstore file is written with the binary image
@@ -300,7 +308,7 @@ function addToCache(res,req,db,results,index ) {
                             });
                         });
                     });
-      
+            });
 
 }
 

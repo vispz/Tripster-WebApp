@@ -43,9 +43,9 @@ html
         .col-lg-3.col-md-4.col-xs-6.thumb
           a.openModal(href='#', data-toggle='modal', data-target='#basicModal' data-id=images)
             if images.hasImage
-              img.img-responsive(src='data:image/jpeg;base64'+images.image ,alt='' data-comments=images.comments)
+              img.img-responsive(src=images.image ,alt='' data-comments=images.comments)
             else
-              img.img-responsive(src='images.URL',alt='' data-comments=images.comments)
+              img.img-responsive(src=images.URL,alt='' data-comments=images.comments)
           div#basicModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='basicModal', aria-hidden=true)
               div.modal-dialog
                 div.modal-content
