@@ -3,124 +3,41 @@ extend layout
 //  link(href='/stylesheets/datepicker.css', rel='stylesheet')
 block body
   #page-wrapper(style='padding-top: 10px')
-    .row
-      .col-lg-6
-        .panel.panel-default
-          .panel-heading
-            i.fa.fa-users.fa-fw
-            | Edit Profile
-          // /.panel-heading
-          .panel-body
-            form.form(method="post", action="/addFriend", role="form", id="editform", name="friendForm")
-              each user in user_results.length
-                .row
-                  .col-md-3
-                    img(src=user.PHOTO_URL, alt='profilePic', align='center', width = "100%")
-                  .col-md-6
-                    | #{user.FIRSTNAME} #{user.LASTNAME}
-                  .col-md-3
-                    button.btn.btn-lg.btn-primary( type="submit", value=user.USERNAME) Add friend
+    if (query_results.user_results!='undefined')
+          .row
+            .col-lg-6
+              .panel.panel-default
+                .panel-heading
+                  i.fa.fa-users.fa-fw
+                  | Users
+                // /.panel-heading
+                .panel-body
+                  form.form(method="post", action="/addFriend", role="form", id="friendform", name="friendForm")
+                    each user in query_results.user_results
+                      .row
+                        .col-md-3
+                          img(src=user.PHOTO_URL, alt='profilePic', align='center', width = "100%")
+                        .col-md-5
+                          | #{user.FIRSTNAME} #{user.LASTNAME}
+                        .col-md-4
+                          button.btn.btn-sm.btn-primary( type="submit", value=user.USERNAME) Add friend
 
-      //- .col-lg-6
-      //-   .panel.panel-default
-      //-     .panel-heading
-      //-       i.fa.fa-users.fa-fw
-      //-       | Edit Profile
-      //-     // /.panel-heading
-      //-     .panel-body
-      //-       form.form(method="post", action="/saveNewUserData", role="form", id="editform", name="editform", onsumbit="return checkPasswordMatch();")
-      //-         .row
-      //-           .col-xs-6.col-md-6
-      //-             label First Name
-      //-             input.form-control(type="text", name="firstname", placeholder="First Name", value=results.firstname, required, autofocus="")
-      //-           .col-xs-6.col-md-6
-      //-             label Last Name
+            .col-lg-6
+              .panel.panel-default
+                .panel-heading
+                  i.fa.fa-send.fa-fw
+                  | Locations
+                // /.panel-heading
+                .panel-body
+                  form.form(method="post", action="/addLocation", role="form", id="locationform", name="locationform")
+                    each loc in query_results.location_results
+                      .row
+                        .col-sm-6
+                          | #{loc.NAME} 
+                        .col-sm-4
+                          button.btn.btn-sm.btn-primary( type="submit", value=loc.ID) Dreamlist it
+                      br
                       
-
-
-
-    script(type='text/javascript', language='javascript').
-      SuccessEnum = {
-      SUCCESS : 1,
-      FAIL : 0
-      };
-
-      function resetData()
-      {
-      document.getElementById("editform").reset();
-      }
-
-      function checkPasswordMatch()
-      {
-        console.log('in password check');
-        console.log('-- -------- -----');
-        var pass1 = document.getElementById("editform").new_password.value;
-        var pass2 = document.getElementById("editform").new_password_retype.value;
-        var ok = true;
-        if (pass1 != pass2) {
-          //alert("Passwords Do not match");
-          document.getElementById("editform").new_password.style.borderColor = "#E34234";
-          document.getElementById("editform").new_password_retype.style.borderColor = "#E34234";
-          ok = false;
-        }
-        return ok;
-        }
-      }
-
-      function checkIfLastFail(success, error)
-      {
-      console.log('In results check');
-      if (typeof(success) != 'undefined' &&  typeof (error) != 'undefined')
-      {
-      console.log('results success : '+success);
-      console.log('results error : '+ error);
-      if (success == SuccessEnum.SUCCESS )
-      return;
-      else
-      {
-      alert(error);
-      }
-      }
-      }
-      function allLetter(inputtxt)
-      {
-      var letters = /^[A-Za-z]+$/;
-      if(inputtxt.value.match(letters))
-      {
-      return true;
-      }
-      else
-      {
-      return false;
-      }
-      }
-      function validateForm()
-      {
-      console.log(document.forms["signupForm"]);
-      var firstname = document.forms["signupForm"]["firstname"].value;
-      var lastname = document.forms["signupForm"]["lastname"].value;
-      var password = document.forms["signupForm"]["password"].value;
-      alert("validation values <br \\>"+" firstname : "+ firstname
-      +"<br />" + " lastname : " + lastname + "<br />" +
-      "password : "+password);
-      if (allLetter(firstname))
-      {
-      alert("Please enter a valid firstname");
-      return false;
-      }
-      else if( allLetter(lastname)  )
-      {
-      alert("Please enter a valid lastname");
-      return false;
-      }
-      else if (password.length < 5)
-      {
-      alert("Please enter a valid password make sure"+
-      "it is atleast five characters long.");
-      return false;
-      }
-      return true;
-      }
     script(src='/javascripts/jquery.js')
     // Bootstrap Core JavaScript
     script(src='/javascripts/bootstrap.min.js')

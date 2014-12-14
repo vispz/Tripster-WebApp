@@ -176,10 +176,10 @@ html(lang='en')
               li
                 img(src=results.photo_url, alt='profilePic', width='100%', align='middle')
               li.sidebar-search
-                  form.form(method='get', action='/search', role='form', name='searchForm')
+                  form.form(method='post', action='/search', role='form', name='searchForm')
                       .row
                         .col-sm-9
-                          input.form-control(type='text', placeholder='Search...', name='contents')              
+                          input.form-control(type='text', placeholder='Search..', name='contents')              
                         .col-sm-3
                           button.btn.btn-default(type='submit' value="submit" )
                             i.fa.fa-search

@@ -17,7 +17,7 @@ function query_users(res, req)
 {
     console.log("In query users");
 
-    if(!req.query.user_search)
+    if(!req.body.user_search)
     {
     console.log("User not selected going to locations");
 
@@ -34,7 +34,7 @@ function query_users(res, req)
         else 
         {
             var cmd = "SELECT username, firstname, lastname, photo_url FROM USERS " + 
-            "WHERE username LIKE '%"+contents+"%' AND ROWNUM<5";
+            "WHERE username LIKE '%"+contents+"%'";//" AND ROWNUM<10";
             console.log(cmd);
             connection.execute(cmd,
               [],
@@ -59,12 +59,15 @@ function query_users(res, req)
 
 function query_locations(res, req) 
 {   
+    var pg = 'search.jade';
     console.log("In query locations");
-    if(!req.query.location_search)
-    {
-      console.log('No need for locations rendering page');
+    if(!req.body.location_search)
+    { 
+        console.log('No need for locations rendering page ' +  pg);
       //query_trips(res,req);
-      res.render('search.jade',results);
+      var retVal = {results : req.session,
+                    query_results : results};
+      res.render(pg, retVal);
 
     }
     else
@@ -78,7 +81,7 @@ function query_locations(res, req)
         else 
         {
             var cmd = "SELECT id, name FROM location " + 
-            "WHERE name LIKE '%"+contents+"%'  AND ROWNUM<5";
+            "WHERE name LIKE '%"+contents+"%'"; // AND ROWNUM<10";
             console.log(cmd);
             connection.execute(cmd,
               [],
@@ -92,8 +95,9 @@ function query_locations(res, req)
                 {
                   connection.close();
                   results.location_results = location_results;
-                  res.render('search.jade',results);
-                  //query_trips(res,req);
+                    var retVal = {results : req.session,
+                    query_results : results};
+                    res.render(pg, retVal);
                 }
               });
           } 
@@ -103,7 +107,7 @@ function query_locations(res, req)
 
 function query_trips(res, req) 
 {
-    if(!req.query.trip_search)
+    if(!req.body.trip_search)
     {
       res.send(results);
       // res.render( 'searchResults.jade',{results:results});
@@ -156,13 +160,18 @@ function query_trips(res, req)
     }
 }
 
-router.get('/', function(req, res) 
+router.post('/', function(req, res) 
 {
     console.log("\n-----------------------------");
-    console.log("\n-----In Seach.js----");
+    console.log("\n-----In Seach.js----", req.session);
+    // res.render("index");
+    var retVal = { results: req.session};
+    console.log(retVal);
+    // res.render("editprofile.jade", retVal);
+
     username = req.session.name;
-    contents =  req.query.contents;
-    console.log("Req query : ", req.query);
+    contents =  req.body.contents;
+    console.log("Req query : ", req.body);
 	  query_users(res, req);
 });
 
