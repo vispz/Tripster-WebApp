@@ -1,86 +1,26 @@
 0 info it worked if it ends with ok
-1 verbose cli [ '/usr/local/bin/node',
-1 verbose cli   '/usr/local/bin/npm',
-1 verbose cli   'install',
-1 verbose cli   '-g',
-1 verbose cli   'cookieParser' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'start' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.33
-4 verbose cache add [ 'cookieParser', null ]
-5 verbose cache add name=undefined spec="cookieParser" args=["cookieParser",null]
-6 verbose parsed url { protocol: null,
-6 verbose parsed url   slashes: null,
-6 verbose parsed url   auth: null,
-6 verbose parsed url   host: null,
-6 verbose parsed url   port: null,
-6 verbose parsed url   hostname: null,
-6 verbose parsed url   hash: null,
-6 verbose parsed url   search: null,
-6 verbose parsed url   query: null,
-6 verbose parsed url   pathname: 'cookieParser',
-6 verbose parsed url   path: 'cookieParser',
-6 verbose parsed url   href: 'cookieParser' }
-7 silly lockFile 0e37acdf-cookieParser cookieParser
-8 verbose lock cookieParser /home/adminuser/.npm/0e37acdf-cookieParser.lock
-9 silly lockFile 0e37acdf-cookieParser cookieParser
-10 silly lockFile 0e37acdf-cookieParser cookieParser
-11 verbose addNamed [ 'cookieParser', '' ]
-12 verbose addNamed [ null, '*' ]
-13 silly lockFile 74f56a99-cookieParser cookieParser@
-14 verbose lock cookieParser@ /home/adminuser/.npm/74f56a99-cookieParser.lock
-15 silly addNameRange { name: 'cookieParser', range: '*', hasData: false }
-16 verbose request where is /cookieParser
-17 verbose request registry https://registry.npmjs.org/
-18 verbose request id f1bfe692727bf89b
-19 verbose url raw /cookieParser
-20 verbose url resolving [ 'https://registry.npmjs.org/', './cookieParser' ]
-21 verbose url resolved https://registry.npmjs.org/cookieParser
-22 verbose request where is https://registry.npmjs.org/cookieParser
-23 info trying registry request attempt 1 at 20:56:02
-24 http GET https://registry.npmjs.org/cookieParser
-25 http 404 https://registry.npmjs.org/cookieParser
-26 verbose headers { date: 'Sun, 07 Dec 2014 01:56:05 GMT',
-26 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-26 verbose headers   'content-type': 'application/json',
-26 verbose headers   'cache-control': 'max-age=0',
-26 verbose headers   'content-length': '52',
-26 verbose headers   'accept-ranges': 'bytes',
-26 verbose headers   via: '1.1 varnish',
-26 verbose headers   age: '0',
-26 verbose headers   'x-served-by': 'cache-jfk1026-JFK',
-26 verbose headers   'x-cache': 'MISS',
-26 verbose headers   'x-cache-hits': '0',
-26 verbose headers   'x-timer': 'S1417917364.872497,VS0,VE347',
-26 verbose headers   'keep-alive': 'timeout=10, max=50',
-26 verbose headers   connection: 'Keep-Alive' }
-27 silly registry.get cb [ 404,
-27 silly registry.get   { date: 'Sun, 07 Dec 2014 01:56:05 GMT',
-27 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-27 silly registry.get     'content-type': 'application/json',
-27 silly registry.get     'cache-control': 'max-age=0',
-27 silly registry.get     'content-length': '52',
-27 silly registry.get     'accept-ranges': 'bytes',
-27 silly registry.get     via: '1.1 varnish',
-27 silly registry.get     age: '0',
-27 silly registry.get     'x-served-by': 'cache-jfk1026-JFK',
-27 silly registry.get     'x-cache': 'MISS',
-27 silly registry.get     'x-cache-hits': '0',
-27 silly registry.get     'x-timer': 'S1417917364.872497,VS0,VE347',
-27 silly registry.get     'keep-alive': 'timeout=10, max=50',
-27 silly registry.get     connection: 'Keep-Alive' } ]
-28 silly lockFile 74f56a99-cookieParser cookieParser@
-29 silly lockFile 74f56a99-cookieParser cookieParser@
-30 error 404 404 Not Found: cookieParser
-30 error 404
-30 error 404 'cookieParser' is not in the npm registry.
-30 error 404 You should bug the author to publish it
-30 error 404
-30 error 404 Note that you can also install from a
-30 error 404 tarball, folder, or http url, or git url.
-31 error System Linux 3.11.0-26-generic
-32 error command "/usr/local/bin/node" "/usr/local/bin/npm" "install" "-g" "cookieParser"
-33 error cwd /home/adminuser/workspace/FinalProj
-34 error node -v v0.10.33
-35 error npm -v 1.4.28
-36 error code E404
-37 verbose exit [ 1, true ]
+4 verbose run-script [ 'prestart', 'start', 'poststart' ]
+5 info prestart FinalProj@0.0.0
+6 info start FinalProj@0.0.0
+7 verbose unsafe-perm in lifecycle true
+8 info FinalProj@0.0.0 Failed to exec start script
+9 error FinalProj@0.0.0 start: `node ./bin/www`
+9 error Exit status 8
+10 error Failed at the FinalProj@0.0.0 start script.
+10 error This is most likely a problem with the FinalProj package,
+10 error not with npm itself.
+10 error Tell the author that this fails on your system:
+10 error     node ./bin/www
+10 error You can get their info via:
+10 error     npm owner ls FinalProj
+10 error There is likely additional logging output above.
+11 error System Darwin 13.3.0
+12 error command "node" "/usr/local/bin/npm" "start"
+13 error cwd /Users/niveditavelagaleti/Documents/Databases/repo4/cis550-final-proj/FinalProj
+14 error node -v v0.10.33
+15 error npm -v 1.4.28
+16 error code ELIFECYCLE
+17 verbose exit [ 1, true ]

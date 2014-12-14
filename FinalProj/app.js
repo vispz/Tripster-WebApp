@@ -21,11 +21,21 @@ var mytrips=require('./routes/mytrips');
 var createTrip=require('./routes/createTrip');
 var tripspage=require('./routes/tripspage');
 var saveNewUserData=require('./routes/saveNewUserData');
+var yelp = require('./routes/yelp');
+var test = require('./routes/test');
+//Mongo code
+var mongo = require('mongod');
+var monk = require('monk');
+var db = monk('localhost:27017/caching')
 
-
+var MongoClient = require('mongodb');
 var session = require('express-session');
 var app = express();
-
+// Make our cache db accessible to our router
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
 app.use(cookieParser());
 app.use(session({secret:'harkarsausup',
         saveUninitialized : true,
@@ -61,7 +71,8 @@ app.use('/search', search);
 app.use('/tripspage',tripspage);
 app.use('/addmedia', addmedia);
 app.use('/saveNewUserData', saveNewUserData);
-
+app.use('/yelp', yelp);
+app.use('/test', test);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
