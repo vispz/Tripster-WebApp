@@ -15,8 +15,12 @@ var results={};
 
 function query_users(res, req) 
 {
+    console.log("In query users");
+
     if(!req.query.user_search)
     {
+    console.log("User not selected going to locations");
+
       query_locations(res,req);
     }
     else
@@ -44,6 +48,7 @@ function query_users(res, req)
                 {
                   connection.close();
                   results.user_results = user_results;
+                  console.log('calling locations search');
                   query_locations(res,req);
                 }
               });
@@ -53,10 +58,14 @@ function query_users(res, req)
 }
 
 function query_locations(res, req) 
-{
+{   
+    console.log("In query locations");
     if(!req.query.location_search)
     {
-      query_trips(res,req);
+      console.log('No need for locations rendering page');
+      //query_trips(res,req);
+      res.render('search.jade',results);
+
     }
     else
     {
@@ -83,7 +92,8 @@ function query_locations(res, req)
                 {
                   connection.close();
                   results.location_results = location_results;
-                  query_trips(res,req);
+                  res.render('search.jade',results);
+                  //query_trips(res,req);
                 }
               });
           } 
@@ -114,9 +124,9 @@ function query_trips(res, req)
                       " WHERE P.username = '"+username+"') " +
                       " SELECT T.id AS trip\_id, T.name AS trip\_name " +
                       " FROM Trips T " +
-                      " WHERE T.privacy = 'public' " +
+                      " WHERE ( T.privacy = 'public' " +
                       " OR T.id IN (SELECT * FROM TripParticipates) " +
-                      " OR T.admin = '"+username+"' " +
+                      " OR T.admin = '"+username+"' ) " +
                       " AND T.name LIKE '%"+contents+"%'  AND ROWNUM<5 ";
             console.log(cmd);
             connection.execute(cmd,
@@ -145,13 +155,6 @@ function query_trips(res, req)
        });
     }
 }
-
-
-function output_search(res, contents, finalResult) {
-	
-	res.send(finalResult);
-}
-
 
 router.get('/', function(req, res) 
 {

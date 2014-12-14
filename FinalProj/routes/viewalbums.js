@@ -21,7 +21,11 @@ function query_db(res) {
 		if (err) {
 			console.log(err);
 		} else {
-			connection.execute("SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id + " AND PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + username + "'",
+			var cmd = "SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id + 
+			" AND PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + 
+			username + "'";
+			console.log(cmd);
+			connection.execute(cmd,
 				[],
 				function(err, results) {
 					if (err) {

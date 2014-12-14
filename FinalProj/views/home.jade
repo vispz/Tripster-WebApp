@@ -89,7 +89,7 @@ block body
                           .timeline-body
                             p
                               | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined 
-                            a(href='/trips/?tripid='+trip_var.TRIP_ID)
+                            a(href='/mytrips/?tripid='+trip_var.TRIP_ID)
                               strong #{trip_var.TRIP_NAME}.
                     else                   
                       li.timeline-inverted
