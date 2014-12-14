@@ -41,9 +41,9 @@ router.get('/', function(req, res) {
     console.log("in get method");
 
    MongoClient.connect('mongodb://127.0.0.1:27017/caching', function(err, db) {
-    var fileId = 'testinggoogle.txt'; // this is the cache??
+    var fileId = 'testgoogle.txt'; // this is the cache??
   // Create a new instance of the gridstore
-  var gridStore = new GridStore(db, 'testinggoogle.txt', 'w');
+  var gridStore = new GridStore(db, 'testgoogle.txt', 'w');
 
   // Open the file
   gridStore.open(function(err, gridStore) {
@@ -62,26 +62,28 @@ router.get('/', function(req, res) {
                 assert.equal(null, err);
 
                 // Verify that the file exists
-                GridStore.exist(db, 'testinggoogle.txt', function(err, result) {  //check if the file that we pushed to gridstore exists
+                GridStore.exist(db, 'testgoogle.txt', function(err, result) {  //check if the file that we pushed to gridstore exists
                   assert.equal(null, err);
                   assert.equal(true, result);
                   
                   // Read back all the written content and verify the correctness
                   GridStore.read(db, fileId, function(err, fileData) {          //to read the data from the grid store. now this data will be in binary
-                    assert.equal(image.toString('base64'), fileData.toString('base64'));
+                   
                     console.log("reading image in base 64 done");
 // read all the data in base64 format string 
                   console.log('Done');
                    res.writeHead(200, {
-                                    'Content-Type': 'image/jpg',
+                                    'Content-Type': 'image/jpeg',
                                     'Content-Length':fileData.length});
 
                                 console.log("File length is " +fileData.length);
-                                res.write(fileData, "binary");
-                                res.end(fileData,"binary");
+                                res.write(fileData, 'binary');
+                                res.end(fileData,'binary');
+                                console.log(fileData);
                                 console.log('Really done');
 
                     db.close();
+                    
                   });                 
                 });
               });

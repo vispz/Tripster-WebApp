@@ -1,26 +1,84 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node', '/usr/local/bin/npm', 'start' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'FileRepository' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.33
-4 verbose run-script [ 'prestart', 'start', 'poststart' ]
-5 info prestart FinalProj@0.0.0
-6 info start FinalProj@0.0.0
-7 verbose unsafe-perm in lifecycle true
-8 info FinalProj@0.0.0 Failed to exec start script
-9 error FinalProj@0.0.0 start: `node ./bin/www`
-9 error Exit status 8
-10 error Failed at the FinalProj@0.0.0 start script.
-10 error This is most likely a problem with the FinalProj package,
-10 error not with npm itself.
-10 error Tell the author that this fails on your system:
-10 error     node ./bin/www
-10 error You can get their info via:
-10 error     npm owner ls FinalProj
-10 error There is likely additional logging output above.
-11 error System Darwin 13.3.0
-12 error command "node" "/usr/local/bin/npm" "start"
-13 error cwd /Users/niveditavelagaleti/Documents/Databases/repo4/cis550-final-proj/FinalProj
-14 error node -v v0.10.33
-15 error npm -v 1.4.28
-16 error code ELIFECYCLE
-17 verbose exit [ 1, true ]
+4 verbose readDependencies using package.json deps
+5 verbose cache add [ 'FileRepository', null ]
+6 verbose cache add name=undefined spec="FileRepository" args=["FileRepository",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'FileRepository',
+7 verbose parsed url   path: 'FileRepository',
+7 verbose parsed url   href: 'FileRepository' }
+8 silly lockFile 4d19d37b-FileRepository FileRepository
+9 verbose lock FileRepository /Users/niveditavelagaleti/.npm/4d19d37b-FileRepository.lock
+10 silly lockFile 4d19d37b-FileRepository FileRepository
+11 silly lockFile 4d19d37b-FileRepository FileRepository
+12 verbose addNamed [ 'FileRepository', '' ]
+13 verbose addNamed [ null, '*' ]
+14 silly lockFile c93b9163-FileRepository FileRepository@
+15 verbose lock FileRepository@ /Users/niveditavelagaleti/.npm/c93b9163-FileRepository.lock
+16 silly addNameRange { name: 'FileRepository', range: '*', hasData: false }
+17 verbose request where is /FileRepository
+18 verbose request registry https://registry.npmjs.org/
+19 verbose request id 21993f00b153ccff
+20 verbose url raw /FileRepository
+21 verbose url resolving [ 'https://registry.npmjs.org/', './FileRepository' ]
+22 verbose url resolved https://registry.npmjs.org/FileRepository
+23 verbose request where is https://registry.npmjs.org/FileRepository
+24 info trying registry request attempt 1 at 21:49:20
+25 http GET https://registry.npmjs.org/FileRepository
+26 http 404 https://registry.npmjs.org/FileRepository
+27 verbose headers { date: 'Sun, 14 Dec 2014 02:49:21 GMT',
+27 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R14B04)',
+27 verbose headers   'content-type': 'application/json',
+27 verbose headers   'cache-control': 'max-age=0',
+27 verbose headers   'content-length': '52',
+27 verbose headers   'accept-ranges': 'bytes',
+27 verbose headers   via: '1.1 varnish',
+27 verbose headers   age: '0',
+27 verbose headers   'x-served-by': 'cache-iad2134-IAD',
+27 verbose headers   'x-cache': 'MISS',
+27 verbose headers   'x-cache-hits': '0',
+27 verbose headers   'x-timer': 'S1418525361.170866,VS0,VE73',
+27 verbose headers   'keep-alive': 'timeout=10, max=50',
+27 verbose headers   connection: 'Keep-Alive' }
+28 silly registry.get cb [ 404,
+28 silly registry.get   { date: 'Sun, 14 Dec 2014 02:49:21 GMT',
+28 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R14B04)',
+28 silly registry.get     'content-type': 'application/json',
+28 silly registry.get     'cache-control': 'max-age=0',
+28 silly registry.get     'content-length': '52',
+28 silly registry.get     'accept-ranges': 'bytes',
+28 silly registry.get     via: '1.1 varnish',
+28 silly registry.get     age: '0',
+28 silly registry.get     'x-served-by': 'cache-iad2134-IAD',
+28 silly registry.get     'x-cache': 'MISS',
+28 silly registry.get     'x-cache-hits': '0',
+28 silly registry.get     'x-timer': 'S1418525361.170866,VS0,VE73',
+28 silly registry.get     'keep-alive': 'timeout=10, max=50',
+28 silly registry.get     connection: 'Keep-Alive' } ]
+29 silly lockFile c93b9163-FileRepository FileRepository@
+30 silly lockFile c93b9163-FileRepository FileRepository@
+31 error 404 404 Not Found: FileRepository
+31 error 404
+31 error 404 'FileRepository' is not in the npm registry.
+31 error 404 You should bug the author to publish it
+31 error 404 It was specified as a dependency of 'FinalProj'
+31 error 404
+31 error 404 Note that you can also install from a
+31 error 404 tarball, folder, or http url, or git url.
+32 error System Darwin 13.3.0
+33 error command "node" "/usr/local/bin/npm" "install" "FileRepository"
+34 error cwd /Users/niveditavelagaleti/Documents/Databases/repo4/cis550-final-proj/FinalProj
+35 error node -v v0.10.33
+36 error npm -v 1.4.28
+37 error code E404
+38 verbose exit [ 1, true ]
