@@ -1,43 +1,59 @@
 extend layout
 //block header
 //  link(href='/stylesheets/datepicker.css', rel='stylesheet')
+mixin contentUser
+  .panel.panel-default
+      .panel-heading
+        i.fa.fa-users.fa-fw
+        | Users
+      // /.panel-heading
+      .panel-body
+        form.form(method="post", action="/addFriend", role="form", id="friendform", name="friendForm")
+          each user in query_results.user_results
+            .row
+              .col-md-3
+                img(src=user.PHOTO_URL, alt='profilePic', align='center', width = "100%")
+              .col-md-5
+                | #{user.FIRSTNAME} #{user.LASTNAME}
+              .col-md-4
+                if (user.isFriend)
+                  button.btn.btn-sm.btn-default( type="submit", id="submitAddFriend", name="submitAddFriend", value=user.USERNAME, disabled="true") Add friend
+                else
+                  button.btn.btn-sm.btn-primary( type="submit", id="submitAddFriend", name="submitAddFriend", value=user.USERNAME) Add friend
+
+mixin contentLocation
+  .panel.panel-default
+      .panel-heading
+        i.fa.fa-send.fa-fw
+        | Locations
+      // /.panel-heading
+      .panel-body
+        form.form(method="post", action="/addDreamList", role="form", id="locationform", name="locationform")
+          each loc in query_results.location_results
+            .row
+              .col-sm-6
+                | #{loc.NAME} 
+              .col-sm-4
+                button.btn.btn-sm.btn-primary( type="submit", id="submitAddDreamList", name="submitAddDreamList", value=loc.ID) Dreamlist it
+            br
 block body
   #page-wrapper(style='padding-top: 10px')
-    if (query_results.user_results!='undefined')
+    if (typeof(query_results.user_results)!=='undefined' && typeof(query_results.location_results)!=='undefined' )
+          -console.log('both are searched for')
           .row
             .col-lg-6
-              .panel.panel-default
-                .panel-heading
-                  i.fa.fa-users.fa-fw
-                  | Users
-                // /.panel-heading
-                .panel-body
-                  form.form(method="post", action="/addFriend", role="form", id="friendform", name="friendForm")
-                    each user in query_results.user_results
-                      .row
-                        .col-md-3
-                          img(src=user.PHOTO_URL, alt='profilePic', align='center', width = "100%")
-                        .col-md-5
-                          | #{user.FIRSTNAME} #{user.LASTNAME}
-                        .col-md-4
-                          button.btn.btn-sm.btn-primary( type="submit", value=user.USERNAME) Add friend
-
+              mixin contentUser
             .col-lg-6
-              .panel.panel-default
-                .panel-heading
-                  i.fa.fa-send.fa-fw
-                  | Locations
-                // /.panel-heading
-                .panel-body
-                  form.form(method="post", action="/addLocation", role="form", id="locationform", name="locationform")
-                    each loc in query_results.location_results
-                      .row
-                        .col-sm-6
-                          | #{loc.NAME} 
-                        .col-sm-4
-                          button.btn.btn-sm.btn-primary( type="submit", value=loc.ID) Dreamlist it
-                      br
-                      
+              mixin contentLocation
+
+    else if (typeof(query_results.user_results) !== 'undefined')
+          -console.log('only user searched for')
+          mixin contentUser
+
+    else if (typeof(query_results.location_results) !== 'undefined')
+          -console.log('only user searched for')
+          mixin contentLocation
+
     script(src='/javascripts/jquery.js')
     // Bootstrap Core JavaScript
     script(src='/javascripts/bootstrap.min.js')
@@ -53,3 +69,4 @@ block body
     script(src='/javascripts/sb-admin-2.js')
     |     
     script(src='/javascripts/bootstrap-datepicker.js')
+

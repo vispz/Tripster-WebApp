@@ -34,7 +34,9 @@ function query_users(res, req)
         else 
         {
             var cmd = "SELECT username, firstname, lastname, photo_url FROM USERS " + 
-            "WHERE username LIKE '%"+contents+"%'";//" AND ROWNUM<10";
+            " WHERE (username LIKE '%"+contents+"%' OR firstname LIKE '%"+contents+"%' "+
+            " OR lastname LIKE '%"+contents+"%') "+
+            " AND username !='"+req.session.name+"'";//" AND ROWNUM<10";
             console.log(cmd);
             connection.execute(cmd,
               [],
@@ -48,13 +50,58 @@ function query_users(res, req)
                 {
                   connection.close();
                   results.user_results = user_results;
-                  console.log('calling locations search');
-                  query_locations(res,req);
+                  console.log('calling friends search');
+                  query_friends(res,req);
                 }
               });
   		    } 
   	   });
     }
+}
+
+
+function query_friends(res, req)
+{
+       oracle.connect(connectData, function(err, connection) 
+       {
+        if (err) 
+        {
+          console.log(err);
+        } 
+        else 
+        {
+            var cmd = "SELECT username2 AS  friend\_username FROM friends WHERE username1='"+
+            username+"'";
+            console.log(cmd);
+            connection.execute(cmd,
+              [],
+              function(err, friend_results) 
+              {
+                if (err) 
+                {
+                  console.log(err);
+                } 
+                else 
+                {
+                  for (var i = 0 ; i < results.user_results.length ; i ++)
+                  {
+                    results.user_results[i].isFriend = false;
+
+                    for(var j = 0 ; j < friend_results.length; j++ )
+                      if(  friend_results[j].FRIEND_USERNAME == results.user_results[i].USERNAME )
+                      {
+                        results.user_results[i].isFriend = true;
+                        break;
+                      }
+                  }
+                  connection.close();
+                  console.log('calling locations search');
+                  query_locations(res, req) 
+                }
+              });
+          } 
+       }); 
+
 }
 
 function query_locations(res, req) 
@@ -68,7 +115,8 @@ function query_locations(res, req)
       var retVal = {results : req.session,
                     query_results : results};
       res.render(pg, retVal);
-
+console.log('Rendered');
+     
     }
     else
     {
@@ -162,6 +210,7 @@ function query_trips(res, req)
 
 router.post('/', function(req, res) 
 {
+    results ={};
     console.log("\n-----------------------------");
     console.log("\n-----In Seach.js----", req.session);
     // res.render("index");
