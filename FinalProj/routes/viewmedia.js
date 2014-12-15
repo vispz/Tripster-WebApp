@@ -10,7 +10,6 @@ var connectData = {
 var oracle = require("oracle");
 var username = 'lsn';
 var album_id;
-var photo_id = "51";
 
 var mongo = require('mongod');
 var monk = require('monk');

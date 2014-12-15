@@ -17,11 +17,14 @@ var yelp = require("yelp").createClient({
   token: "QqgqDDI3Kmd4nmy35nJJuTO4p9zvg_zL",
   token_secret: "C5PrmEjUSaLJxR0qa1P5gq0Kw2U"
 });
+<<<<<<< HEAD
 //Mongo code
 var mongo = require('mongod');
 var monk = require('monk');
 var db = monk('localhost:27017/caching');
 
+=======
+>>>>>>> e99dc8a991f5788a2e4a0e7acc008238442428a5
 
 /*get the mytrips page*/
 router.get('/',function(req,res){

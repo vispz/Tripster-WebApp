@@ -135,6 +135,7 @@ html
       |     
       .col-md-4
         .participants
+<<<<<<< HEAD
           .content-box
             table.table.table-hover(name='Trip Members', style='width:400px') 
               label Trip Members
@@ -169,6 +170,38 @@ html
   
   a(name='Yelp')
   .yelp
+=======
+          table.table.table-hover(name='Trip Members') 
+            label Trip Members
+                for member in mem
+                  tr
+                    td #{member.FIRSTNAME} #{member.LASTNAME} (#{member.RSVP})
+
+    // end of row 2
+    .invites
+      form.form-horizontal(method='post', action='/tripspage?tripid=#{tid}')
+        fieldset
+          // Form Name
+          legend Invite Friends
+          // Select Multiple
+          .control-group
+            label.control-label(for='selectfriends') Select:
+            |   
+            .controls
+              select.input-xlarge( name='selectfriends', multiple='multiple')
+                for friend in friends
+                  option #{friend.FIRSTNAME} #{friend.LASTNAME}  -#{friend.USERNAME}
+          .control-group
+                label.control-label(for='invite')
+                |   
+                .controls
+                  button#invite.btn.btn-primary(type='submit', name='invite') Invite!
+       
+
+
+    a(name='invite')
+  body
+>>>>>>> e99dc8a991f5788a2e4a0e7acc008238442428a5
     table
         tr
             td(colspan="2")

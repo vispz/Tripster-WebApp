@@ -1,0 +1,35 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="description", content="")
+    meta(name="author", content="")
+    title= "Tripster - View Album Photos"
+    // Bootstrap Core CSS
+    link(href="/stylesheets/bootstrap.min.css", rel="stylesheet")
+    link(href="/stylesheets/thumbnail-gallery.css" rel="stylesheet")
+
+
+  body
+    table
+        tr
+            td(colspan="2")
+                h3 Recommendations from 
+                    img(src="images/yelp_logo_75x38.png")
+        for restaurant in yelp.businesses
+            tr
+                td(rowspan="3") 
+                    img(src=restaurant.image_url alt='restaurant image')
+
+                td 
+                    a(href=restaurant.url) #{restaurant.name}
+            tr
+                td
+                    img(src=restaurant.rating_img_url_small alt='restaurant rating')
+                    p based on #{restaurant.review_count} reviews
+            tr
+                td(width="500")
+                    p #{restaurant.snippet_text}
+
