@@ -1,3 +1,4 @@
+sudo apt-get install mongodb-server
 npm install yelp
 npm install mongod
 npm install monk
