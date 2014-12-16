@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var crypto=require('crypto');
 
 //Connect string to Oracle
 var connectData = { 
@@ -34,6 +35,8 @@ function  insertNewData(res, req)
 	var dob = req.body.dob;
 	var photo_url = req.body.photo_url;
 
+	console.log("inside insert new data");
+
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
 			console.log(err);
@@ -41,14 +44,15 @@ function  insertNewData(res, req)
 			
 			var cmd;
 			var password;
-
+			var sha1=crypto.createHash('sha1');
 			if (new_password  && new_password==new_password_retype && new_password!="")
 			{
-				password = new_password;
+				
+				password=sha1.update(new_password).digest('hex');	
 			}
 			else
 			{
-				password = req.body.password;
+				password = sha1.update(req.body.password).digest('hex');
 			}
 				
 			var cmd = "UPDATE users SET firstname = '"+firstname+"', " +
@@ -68,6 +72,8 @@ function  insertNewData(res, req)
 					} 
 					else 
 					{	
+						console.log("new data inserted");
+
 						req.session.firstname = firstname;
 						req.session.lastname = lastname;
 						req.session.affiliation = affiliation;
@@ -86,8 +92,10 @@ function  insertNewData(res, req)
 function checkPassword(res, req)
 {
 	var username = req.session.name;
-	var password = req.body.password;
-
+	var sha1=crypto.createHash('sha1');
+	var password=sha1.update(req.body.password).digest('hex');	
+	
+	console.log("IN POST CHECK PASSWORD");
 
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
@@ -109,14 +117,13 @@ function checkPassword(res, req)
 					} 
 					else 	
 					{		
-							console.log("\n\n\n\n\n\n\n");
-							console.log(dbRetVals.length);
+							console.log("checked the password");
 							if (dbRetVals.length==0)
 							{
 								res.redirect('/editprofile');
 							}
 							else
-							{
+							{	console.log("Inserting the data");
 								insertNewData(res, req);
 							}
 					}
@@ -129,6 +136,7 @@ function checkPassword(res, req)
 
 /////
 router.post('/', function(req, res) {
+	console.log("IN POST OF SAVE DATA");
 	if(!req.session.name)
 	{	
 		res.render('index.jade',

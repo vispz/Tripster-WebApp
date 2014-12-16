@@ -77,8 +77,7 @@ function query_db(req, res, username, password) {
 						// console.log(results);
 						// console.log("length : ", results.length);
 						connection.close(); // done with the connection
-
-						wrapProfilePhoto(res,req,results,0,username);
+						setsession(res,req,results,username,LoginErrorCodeEnum.INCORRECT_ID_PASSWORD);
 						
 						//success
 						
@@ -177,7 +176,7 @@ function getCacheUserPhoto(res,req,db,results,index,username) {
                         // console.log('Done');
 
                         hasImage = true;
-                        results[index].PHOTO_URL="data:image/jpeg;base64,"+fileData.toString('base64'); //setting the image in the JSON
+                        results[index].image="data:image/jpeg;base64,"+fileData.toString('base64'); //setting the image in the JSON
                         results[index].hasImage = true; //setting the property that the JSON contains the image at the index
                         //res.write(fileData, 'binary');
                         //res.end(fileData,'binary');
@@ -807,6 +806,7 @@ router.get('/', function(req, res){
 		var sha1=crypto.createHash('sha1');
 		password=sha1.update(req.session.password);
 		req.session.password = undefined;
+
 		query_db(req, res,req.session.username, password);
 	}
 	else if(req.session.name)
