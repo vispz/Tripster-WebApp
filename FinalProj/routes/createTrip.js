@@ -19,15 +19,35 @@ var triplocations=[];
 var newid=[];
 /*get the createTrip page*/
 router.get('/',function(req,res){
-   admin = req.session.name;
-	getdata(res,req);
-
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
+        admin = req.session.name;
+	   getdata(res,req);
+    }
 });
 
 router.post('/', function(req,res) {
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
     console.log(req.body);
     getID(res,req);
-    
+    }
 });
 
 

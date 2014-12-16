@@ -128,10 +128,20 @@ function checkPassword(res, req)
 
 
 /////
-/* GET home page. */
 router.post('/', function(req, res) {
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	console.log("Req query for changeuserdata : ");
 	checkPassword(res, req);
+	}
 });
 
 module.exports = router;

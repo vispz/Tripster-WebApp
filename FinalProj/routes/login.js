@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var crypto=require('crypto');
 
 //Connect string to Oracle
 var connectData = { 
@@ -390,7 +391,8 @@ router.get('/', function(req, res){
 	if(req.session.password!==undefined)
 	{
 		console.log('\n\n\n\n\n\nreq session in get OF LOGIN ');
-		password = req.session.password;
+		var sha1=crypto.createHash('sha1');
+		password=sha1.update(req.session.password);
 		req.session.password = undefined;
 		query_db(req, res,req.session.username, password);
 	}

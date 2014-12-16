@@ -37,18 +37,39 @@ var rating;
 
 router.get('/', function(req, res) {
 	
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
 	album_id = req.query.albumid;
 	getMedia(res, req);
+    }
 });
 
 router.post('/', function(req, res) {
 	//res.send(req.body);
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
 	album_id = req.body.albumid;
 	media_ref = req.body.photoid;
 	comment = req.body.comments;
 	rating = req.body.ratings;
 	add_comments(res);
-
+    }
 	// if (req.body.comments != "") {
 	// 	add_comments(res, req.body.comments, req.body.photoid)
 	// } else if (req.body.ratings != "") {

@@ -26,20 +26,41 @@ var db = monk('localhost:27017/caching');
 /*get the mytrips page*/
 router.get('/',function(req,res){
 
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
    tripid = req.query.tripid;
    admin = req.session.name;
 
     //admin = 'FSpagMon';
     //tripid = 1;
    checkadminstatus(res);
+    }
 
     });
 
 router.post('/', function(req,res) {
-    
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
     getrating(res,req);
     getcomments(res,req);
     getinvite(res,req);
+    }
     
 });
 

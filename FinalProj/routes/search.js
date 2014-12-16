@@ -143,14 +143,62 @@ console.log('Rendered');
                 {
                   connection.close();
                   results.location_results = location_results;
-                    var retVal = {results : req.session,
-                    query_results : results};
-                    res.render(pg, retVal);
+                    query_dreamlist(res, req);
                 }
               });
           } 
        });
     }
+}
+
+function query_dreamlist(res, req)
+{
+  
+      var pg = 'search.jade';
+      oracle.connect(connectData, function(err, connection) 
+      {
+        if (err) 
+        {
+          console.log(err);
+        } 
+        else 
+        {
+            var cmd = "SELECT loc_id FROM dreamlist " + 
+            "WHERE username ='"+username+"'"; // AND ROWNUM<10";
+            console.log(cmd);
+            connection.execute(cmd,
+              [],
+              function(err, dream_results) 
+              {
+                if (err) 
+                {
+                  console.log(err);
+                } 
+                else 
+                {
+                  connection.close();
+                  for (var i = 0 ; i < results.location_results.length ; i ++)
+                  {
+                    results.location_results[i].isDreamlist = false;
+
+                    for(var j = 0 ; j < dream_results.length; j++ )
+                      if(  dream_results[j].LOC_ID == results.location_results[i].ID )
+                      {
+                        results.location_results[i].isDreamlist = true;
+                        break;
+                      }
+
+                    var retVal = {results : req.session,
+                      query_results : results,                    
+                      };
+                    res.render(pg, retVal);
+                 }
+                }
+              });
+          } 
+       });
+    
+
 }
 
 function query_trips(res, req) 
@@ -209,7 +257,17 @@ function query_trips(res, req)
 }
 
 router.post('/', function(req, res) 
-{
+{ 
+    if(!req.session.name)
+  { 
+    res.render('index.jade',
+            {
+              success : 0,
+              error : "Please log in first"
+            });
+  }
+  else
+  {
     results ={};
     console.log("\n-----------------------------");
     console.log("\n-----In Seach.js----", req.session);
@@ -222,6 +280,7 @@ router.post('/', function(req, res)
     contents =  req.body.contents;
     console.log("Req query : ", req.body);
 	  query_users(res, req);
+  }
 });
 
 

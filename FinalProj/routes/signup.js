@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var crypto=require('crypto');
 
 //Connect string to Oracle
 var connectData = { 
@@ -47,7 +48,8 @@ function query_db(res, reqbody, userDetails, req) {
 	var emailid = reqbody.emailid;
 	var dob = reqbody.dob;
 	var username = reqbody.username;
-	var password = reqbody.password;
+	var sha1=crypto.createHash('sha1');
+	var password=sha1.update(reqbody.password).digest('hex');
 	
 
 	oracle.connect(connectData, function(err, connection) {
@@ -187,6 +189,7 @@ function checkInputs(reqbody, userDetails)
 /* GET home page. */
 router.post('/', function(req, res) {
 	//.render('home.jade');
+
 	console.log(req.body)
 	getUsersInDb(res,req.body, req);
 	

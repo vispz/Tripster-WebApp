@@ -14,9 +14,20 @@ var privacy;
 var new_album_id;
 
 router.get('/', function(req, res) {
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	trip_id = req.query.trip_id;
 	//res.send(trip_id)
 	res.render('createalbum', {TRIP_ID: trip_id});
+	}
 });
 
 // This method is responsible for when user clicks create album button.
@@ -24,11 +35,22 @@ router.get('/', function(req, res) {
 // For now, I'm just printing to the screen the new album information.
 // Still need to know how to get username and trip_id to save new album instance.
 router.post('/', function(req, res) {
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	trip_id = parseInt(req.body.trip_id);
 	albumname = req.body.albumname;
 	privacy = req.body.privacy;
 	//res.send(req.body);
 	getNewAlbumID(res, req);
+	}
 });
 
 

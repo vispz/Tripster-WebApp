@@ -50,8 +50,19 @@ function query_albums(res, req)
 
 router.get('/', function(req, res) 
 {
+  if(!req.session.name)
+  { 
+    res.render('index.jade',
+            {
+              success : 0,
+              error : "Please log in first"
+            });
+  }
+  else
+  {
     username = req.session.name;
     query_albums(res, req);
+  }
 });
 
 

@@ -16,11 +16,21 @@ router.get('/', function(req, res) {
 	
 	// Delete session variables when 
 	// entering login page.
-	
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	console.log('In get editprofile');
 	var retVal = { results: req.session};
 	console.log("RETVAL",retVal);
   	res.render('editprofile.jade', retVal);
+  	}
 });
 
 function saveData(req,res)
@@ -76,7 +86,18 @@ function saveData(req,res)
 
 
 router.post('/', function (req, res){
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	console.log('In post editprofile');
 	saveData(res, req);
+	}
 });
 module.exports = router;

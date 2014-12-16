@@ -24,7 +24,6 @@ var saveNewUserData=require('./routes/saveNewUserData');
 var addFriend=require('./routes/addFriend');
 // var addDreamList=require('./routes/addDreamList');
 var yelp = require('./routes/yelp');
-var test = require('./routes/test');
 //Mongo code
 var mongo = require('mongod');
 var monk = require('monk');
@@ -78,7 +77,6 @@ app.use('/addFriend', addFriend);
 // app.use('/addDreamList', addDreamList);
 app.use('/yelp', yelp);
 
-app.use('/test', test);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

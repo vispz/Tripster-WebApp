@@ -50,11 +50,16 @@ function queryDb(res, req, isPost)
 }
 /* GET home page. */
  router.get('/', function(req, res) {
-	console.log("Req query for friendAcceptance : "+req.query);
 	if(!req.session.name){
-		res.redirect('/');
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
 	}
 	else{
+		console.log("Req query for friendAcceptance : "+req.query);
+	
 		queryDb(res,req, false);
 	}
 	//res.send( JSON.stringify(req.body.submitAddFriend.results ) );
@@ -65,8 +70,12 @@ function queryDb(res, req, isPost)
 router.post('/', function(req, res) {
 	console.log("Req query for friendAcceptance : "+req.body);
 	if(!req.session.name)
-	{
-		res.redirect('/');
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
 	}
 	else
 	{

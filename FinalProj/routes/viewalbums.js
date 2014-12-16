@@ -11,9 +11,20 @@ var username;
 var trip_id;
 
 router.get('/', function(req, res) {
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	username = req.session.name;
 	trip_id = req.query.tripid;
 	query_db(res);
+	}
 });
 
 function query_db(res) {

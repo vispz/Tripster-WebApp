@@ -19,7 +19,11 @@ var type; // Set during post
 router.get('/', function(req, res) {
 	if(!req.session.name)
 	{	
-		res.redirect('/');
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
 	}
 	else
 	{
@@ -33,7 +37,11 @@ router.post('/', function(req, res) {
 	//res.send(album_id);
 	if(!req.session.name)
 	{	
-		res.redirect('/');
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
 	}
 	else
 	{
