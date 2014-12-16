@@ -29,6 +29,7 @@ router.get('/', function(req, res) {
 username = req.session.name;
 	trip_id = req.query.tripid;
 	//res.send(trip_id)
+	console.log("In get trip_id : ", trip_id );
 	res.render('createalbum', {TRIP_ID: trip_id});
 	}
 });
@@ -48,17 +49,23 @@ router.post('/', function(req, res) {
 	}
 	else
 	{
+	console.log("In post trip_id : ", trip_id );
+	console.log(typeof(trip_id));
+
 username = req.session.name;
-	trip_id = parseInt(req.body.trip_id);
+	//trip_id = parseInt(req.body.trip_id);
+	trip_id = req.body.trip_id;
+	
+
 	albumname = req.body.albumname;
 	privacy = req.body.privacy;
 	//res.send(req.body);
-	getNewAlbumID(res, req);
+	getNewAlbumID(res, req, trip_id);
 	}
 });
 
 
-function getNewAlbumID(res, req) {
+function getNewAlbumID(res, req, trip_id) {
 	oracle.connect(connectData, function(err, connection) {
 		if (err) {
 			console.log(err);
@@ -72,14 +79,14 @@ function getNewAlbumID(res, req) {
 					} else {
 						connection.close();
 						new_album_id = parseInt(JSON.stringify(results[0].MAX)) + 1;
-						create_album(res);
+						create_album(res, trip_id);
 					}
 				});
 		}
 	});
 }
 
-function create_album(res) {
+function create_album(res, trip_id) {
 	oracle.connect(connectData, function(err, connection) {
 		if (err) {
 			console.log(err);

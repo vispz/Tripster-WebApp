@@ -95,7 +95,7 @@ function add_media(res) {
 			console.log(err);
 		} else {
 			//console.log(album_id + " " + media_id + " " + caption + " " + loc_id + " " + imageurl + " " + type);
-			var cmd = "INSERT INTO MEDIA VALUES(" + media_id + ", " + "'" + caption + "'" + ", " + loc_id + ", " + "'" + imageurl + "'" + ", " + album_id + ", " + "'" + type + "'" + ")";
+			var cmd = "INSERT INTO MEDIA VALUES(" + media_id + ", " + "'" + caption + "'" + ", " + loc_id + ", " + "'" + imageurl + "'" + ", " + album_id + ", " + "'" + type + "'" + ", "+null+" )";
 			connection.execute(cmd,
 				[],
 				function(err, results) {
