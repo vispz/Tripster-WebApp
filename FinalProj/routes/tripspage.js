@@ -82,6 +82,7 @@ function checkadminstatus(res){
                 console.log("admin");
                 console.log(admin);
                 if(admin===undefined) {
+                    alert("The admin has set the trip settings to private\nRedirecting to home page");
                     res.redirect('/login');
                 }
                 if(tripadmin==admin){
@@ -126,6 +127,7 @@ function checkmemberstatus(res,privacysetting) {
                         }
                     }
                     if (member==false){
+                       
                         res.redirect('/login');
                     }
 
@@ -149,9 +151,11 @@ function checkmemberstatus(res,privacysetting) {
                              console.log("going to get trip data");
                         }
                         else {
+                      
                         res.redirect('/login');
                         }
                     } else {
+                        
                         res.redirect('/login');
                     }
                     
