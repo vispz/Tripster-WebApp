@@ -30,7 +30,8 @@ function query_db(req, res, username, password) {
 	
 	// If values have already been cached
 	if ( req.session && req.session.name && req.session.firstname && req.session.photo_url ){
-		loadNumOfAttribs(req, res, username);
+		//loadNumOfAttribs(req, res, username);
+		loadFriendRequests(res, req, username);
 		return;
 	}
 
@@ -72,7 +73,8 @@ function query_db(req, res, username, password) {
 							req.session.affiliation = results[0].AFFILIATION;
 							req.session.email = results[0].EMAIL;
 							req.session.dob = results[0].DOB;
-							loadNumOfAttribs(req, res, username);
+							loadFriendRequests(res, req, username);
+							//loadNumOfAttribs(req, res, username);
 							
 						}
 						else
