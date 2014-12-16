@@ -1,3 +1,4 @@
+ssh -i node.pem ubuntu@ec2-54-174-68-237.compute-1.amazonaws.com
 
 express proj
 cd proj
