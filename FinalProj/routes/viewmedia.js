@@ -8,7 +8,7 @@ var connectData = {
 	database: "TRIPSTER"};
 
 var oracle = require("oracle");
-var username = 'lsn';
+var username ;
 var album_id;
 var photo_id = "51";
 
@@ -37,7 +37,7 @@ var comment;
 var rating;
 
 router.get('/', function(req, res) {
-	
+	username = req.session.name;
 	album_id = req.query.albumid;
 	getMedia(res, req);
 });
@@ -150,8 +150,9 @@ function getMedia(res, req) {
 					} else {
 						console.log(results);
 						connection.close();
+                        if (results){
                         wrapmedia(res,req,results,0);
-		           
+		                } else getMediaResults(res, req, results);
    					//assigning object ID as the media ID
 	               }						
                 });
@@ -234,7 +235,7 @@ function getcache(res,req,db,results,index) {
                         //res.end(fileData,'binary');
                         //console.log(fileData);
                         //console.log('Really done');
-                        console.log(results[index].image);
+                       
                         db.close(); //i have obtained the cached data and i close the database
                         wrapmedia(res, req, results, index + 1);
 
