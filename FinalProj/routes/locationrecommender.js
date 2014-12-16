@@ -7,37 +7,31 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username;
-var trip_id;
+var username = 'FSpagMon'; // set to session
 
 router.get('/', function(req, res) {
-	username = req.session.name;
-	trip_id = req.query.tripid;
+	//username = req.session.name;
 	query_db(res);
 });
+
 
 function query_db(res) {
 	oracle.connect(connectData, function(err, connection) {
 		if (err) {
 			console.log(err);
 		} else {
-			connection.execute("SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id + " AND (PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + username + "')",
+			connection.execute("SELECT DISTINCT L.NAME, L.ID FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID INNER JOIN PARTICIPATES P ON P.TRIP_ID = T.TRIP_ID INNER JOIN FRIENDS F ON F.USERNAME1 = P.USERNAME WHERE F.USERNAME2 = '" + username +"'",
 				[],
 				function(err, results) {
 					if (err) {
 						console.log(err);
 					} else {
 						connection.close();
-						output_media(res, results);
+						res.send(JSON.stringify(results));
 					}
 				});
 		}
 	});
-}
-
-
-function output_media(res, results) {
-	res.render('viewalbums', {result: results});
 }
 
 module.exports = router;
