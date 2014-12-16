@@ -47,13 +47,15 @@ function searchWeb(req, res){
 function searchImage(req, res){
 	if(!req.query.bing_image_search){
 		console.log("Bing image Search not selected going to Bing Web Search");
-		res.send(bing_results);
+		bing_results.results = req.session;
+		res.render('bingSearch', bing_results);
 	}
 	else{
 		bing.images(req.query.bingSearch, function(error, response, body){
 			bing_results.image_search = body.d.results;
 			console.log(body.d.results);
-			res.send(bing_results);
+			bing_results.results = req.session;
+			res.render('bingSearch', bing_results);
 		},
 		{
 			top: 10, //Number of results (max 50)
@@ -70,7 +72,7 @@ function searchImage(req, res){
 
 router.get('/', function(req, res) 
 {
-    results ={};
+    bing_results ={};
     console.log("\n-----------------------------");
     console.log("\n-----In Seach.js----", req.session);
     console.log("Req query : ", req.query);

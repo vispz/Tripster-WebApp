@@ -1,0 +1,18 @@
+extend layout
+block body
+    #page-wrapper(style='padding-top: 10px')
+      .panel.panel-default
+          .panel-heading
+            i.fa.fa-users.fa-fw
+            | My Friends
+          // /.panel-heading
+          .panel-body
+              .row
+                for user in friends
+                  .col-lg-offset-1.col-md-4
+                    .row
+                      .col-md-4
+                        img(src=user.PHOTO_URL, alt='profilePic', align='center', width = "100%")
+                      .col-md-7
+                        a(href='/userPage?username_other=#{user.USERNAME}') #{user.FIRSTNAME} #{user.LASTNAME}
+                    br

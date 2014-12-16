@@ -383,7 +383,9 @@ router.post('/', function(req, res) {
 	else
 	{
 		reqbody = req.body;
-		query_db(req, res,reqbody.username, reqbody.password);
+		var sha1=crypto.createHash('sha1');
+		password=sha1.update(req.body.password).digest('hex');;
+		query_db(req, res,reqbody.username, password);
 	}
 });
 

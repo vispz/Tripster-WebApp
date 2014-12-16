@@ -10,7 +10,7 @@ block body
           .panel-body
               .row
                 for names in result  
-                  .col-md-4
+                  .col-lg-offset-1.col-md-4
                     .row
                       a(href='/tripspage?tripid=#{names.ID}') #{names.NAME}
                     br

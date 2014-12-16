@@ -12,12 +12,15 @@ var contents;
 var username;
 var oracle = require("oracle");	
 var results={};
-
+var isPost = true;
 function query_users(res, req) 
 {
     console.log("In query users");
-
-    if(!req.body.user_search)
+    if (isPost)
+      var reqBody = req.body;
+    else
+      var reqBody = req.query;
+    if(!reqBody.user_search)
     {
     console.log("User not selected going to locations");
 
@@ -62,6 +65,8 @@ function query_users(res, req)
 
 function query_friends(res, req)
 {
+        friend_results={};
+        console.log("In query_friends");
        oracle.connect(connectData, function(err, connection) 
        {
         if (err) 
@@ -70,9 +75,9 @@ function query_friends(res, req)
         } 
         else 
         {
-            var cmd = "SELECT username2 AS  friend\_username FROM friends WHERE username1='"+
+            var cmd = "SELECT F.username2 AS  friend\_username FROM friends F WHERE F.username1='"+
             username+"'";
-            console.log(cmd);
+            console.log("COMMAND : ", cmd);
             connection.execute(cmd,
               [],
               function(err, friend_results) 
@@ -83,6 +88,7 @@ function query_friends(res, req)
                 } 
                 else 
                 {
+                  console.log("friends : ", friend_results);
                   for (var i = 0 ; i < results.user_results.length ; i ++)
                   {
                     results.user_results[i].isFriend = false;
@@ -95,6 +101,7 @@ function query_friends(res, req)
                       }
                   }
                   connection.close();
+                  console.log("\n\n\n\n\n\n\n\n", results.user_results);
                   console.log('calling locations search');
                   query_locations(res, req) 
                 }
@@ -108,7 +115,13 @@ function query_locations(res, req)
 {   
     var pg = 'search.jade';
     console.log("In query locations");
-    if(!req.body.location_search)
+    if (isPost)
+      var reqBody = req.body;
+    else
+      var reqBody = req.query;
+    
+
+    if(!reqBody.location_search)
     { 
         console.log('No need for locations rendering page ' +  pg);
       //query_trips(res,req);
@@ -153,7 +166,7 @@ console.log('Rendered');
 
 function query_dreamlist(res, req)
 {
-  
+
       var pg = 'search.jade';
       oracle.connect(connectData, function(err, connection) 
       {
@@ -176,24 +189,28 @@ function query_dreamlist(res, req)
                 } 
                 else 
                 {
+
                   connection.close();
-                  for (var i = 0 ; i < results.location_results.length ; i ++)
+                  console.log("Done with dreamlist", results.location_results.length, dream_results.length);
+
+                  for (var i = 0 ; i < results.location_results.length ; i++)
                   {
+                    console.log("i1 : ",i);
                     results.location_results[i].isDreamlist = false;
+                    console.log("i2 : ",i ,"loc_i",results.location_results[i]);
 
                     for(var j = 0 ; j < dream_results.length; j++ )
                       if(  dream_results[j].LOC_ID == results.location_results[i].ID )
                       {
                         results.location_results[i].isDreamlist = true;
                         break;
-                      }
-
-                    var retVal = {results : req.session,
-                      query_results : results,                    
-                      };
+                      }           
+                    }
+                      var retVal = {results : req.session,
+                      query_results : results};      
                     res.render(pg, retVal);
                  }
-                }
+               
               });
           } 
        });
@@ -203,7 +220,13 @@ function query_dreamlist(res, req)
 
 function query_trips(res, req) 
 {
-    if(!req.body.trip_search)
+
+  if (isPost)
+      var reqBody = req.body;
+    else
+      var reqBody = req.query;
+    
+    if(!reqBody.trip_search)
     {
       res.send(results);
       // res.render( 'searchResults.jade',{results:results});
@@ -258,6 +281,7 @@ function query_trips(res, req)
 
 router.post('/', function(req, res) 
 { 
+  isPost = true;
     if(!req.session.name)
   { 
     res.render('index.jade',
@@ -271,11 +295,6 @@ router.post('/', function(req, res)
     results ={};
     console.log("\n-----------------------------");
     console.log("\n-----In Seach.js----", req.session);
-    // res.render("index");
-    var retVal = { results: req.session};
-    console.log(retVal);
-    // res.render("editprofile.jade", retVal);
-
     username = req.session.name;
     contents =  req.body.contents;
     console.log("Req query : ", req.body);
@@ -284,5 +303,27 @@ router.post('/', function(req, res)
 });
 
 
+router.get('/', function(req, res) 
+{ 
+  isPost = false;
+    if(!req.session.name)
+  { 
+    res.render('index.jade',
+            {
+              success : 0,
+              error : "Please log in first"
+            });
+  }
+  else
+  {
+    results ={};
+    console.log("\n-----------------------------");
+    console.log("\n-----In Seach.js----", req.session);
+    username = req.session.name;
+    contents =  req.query.contents;
+    console.log("Req query : ", req.query);
+    query_users(res, req);
+  }
+});
 
 module.exports = router;

@@ -38,7 +38,7 @@ block body
                 .huge 
                 |                     
                 div Your Albums
-          a(href='/myAlbums')
+          a(href='/myalbums')
             .panel-footer
               span.pull-left View Details
               span.pull-right
@@ -57,7 +57,7 @@ block body
                 .huge 
                 |                     
                 div Your Friends
-          a(href='#')
+          a(href='/myfriends')
             .panel-footer
               span.pull-left View Details
               span.pull-right
@@ -89,7 +89,7 @@ block body
                           .timeline-body
                             p
                               | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined 
-                            a(href='/mytrips/?tripid='+trip_var.TRIP_ID)
+                            a(href='/tripspage?tripid='+trip_var.TRIP_ID)
                               strong #{trip_var.TRIP_NAME}.
                     else                   
                       li.timeline-inverted
@@ -103,7 +103,7 @@ block body
                           .timeline-body
                             p
                               | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined 
-                            a(href='/trips/?tripid='+trip_var.TRIP_ID)
+                            a(href='/tripspage?tripid='+trip_var.TRIP_ID)
                               strong #{trip_var.TRIP_NAME}.
                 // ALBUM TIMELINE     
                 - var itr = 0

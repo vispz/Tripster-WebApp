@@ -1,0 +1,104 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="description", content="")
+    meta(name="author", content="")
+    title= "Tripster - View Album Photos"
+    // Bootstrap Core CSS
+    link(href="/stylesheets/bootstrap.min.css", rel="stylesheet")
+    link(href="/stylesheets/thumbnail-gallery.css" rel="stylesheet")
+
+
+  body
+    // Navigation
+    nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+      .container
+        // Brand and toggle get grouped for better mobile display
+        .navbar-header
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='#') Tripster
+        // Collect the nav links, forms, and other content for toggling
+        #bs-example-navbar-collapse-1.collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href='#') Home
+            li
+              a(href='#') My Account
+        // /.navbar-collapse
+      // /.container
+    // Page Content
+    .container
+      .row
+        .col-lg-12
+          h1.page-header #{result[0].NAME}
+      for images in result
+        .col-lg-3.col-md-4.col-xs-6.thumb
+          a.openModal(href='#', data-toggle='modal', data-target='#basicModal' data-id=images)
+            img.img-responsive(src=images.URL, alt='' data-comments=images.comments)
+          div#basicModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='basicModal', aria-hidden=true)
+              div.modal-dialog
+                div.modal-content
+                  div.modal-header
+                    button.close(type='button', data-dismiss='modal', aria-hidden=true)
+                    h4#MyModalLabel.modal-title About This Photo: 
+                  div.modal-body
+                    h4 Comments on This Photo
+                    div#commentArea
+                    br
+                    h4 Average Rating For This Photo
+                    div#ratingArea
+                    hr
+                    h4 Comment on and Rate This Image:
+                    form(method='post' action='/media')
+                      input#hidden1(name='photoid', value = '', style='display:none;')
+                      input#hidden2(name='albumid', value = '', style='display:none;')
+                      textarea(name='comments' placeholder='Type your comment here' cols='50', rows='5', style='margin-right:10px;')
+                      label(for='5' style='margin-right:5px;') 5
+                      input#5(type='radio', name='ratings', value='5' style='margin-right:10px;')
+                      label(for='4' style='margin-right:5px;') 4
+                      input#4(type='radio', name='ratings', value='4' style='margin-right:10px;')
+                      label(for='3' style='margin-right:5px;') 3
+                      input#3(type='radio', name='ratings', value='3' style='margin-right:10px;')
+                      label(for='2' style='margin-right:5px;') 2
+                      input#2(type='radio', name='ratings', value='2' style='margin-right:10px;')
+                      label(for='1' style='margin-right:5px;') 1
+                      input#5(type='radio', name='ratings', value='1' style='margin-right:10px;')
+                      input(type='submit', value='submit')
+                    div.modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
+      hr
+      a.btn.btn-success.btn-large(href='/addmedia?albumid=#{result[0].ALBUM_ID}') Add Media
+    // /.container
+    // jQuery
+    script(src='javascripts/jquery.js')
+    script(src='javascripts/bootstrap.min.js')
+    script(type='text/javascript').
+      $(document).ready(function() {
+        $('.openModal').on('click', function(event) {
+          event.preventDefault();
+          var clickedLink = $(event.currentTarget);
+          var currentImage = clickedLink.children('img');
+          var allImageInfo = clickedLink.data('id');
+          var comments = currentImage.data('comments');
+          for (var i = 0; i < comments.length; i++) {
+            $("#commentArea").append("<p>" + comments[i].COMMENTS + "</p> <h5>" +  "-by " + comments[i].FIRSTNAME + " " + comments[i].LASTNAME + "</h5><br>");
+          }
+          $("#ratingArea").append("<p>" + allImageInfo.AVG_RATING + "</p><br>");
+          $("h4#MyModalLabel").append(allImageInfo.CAPTION);
+          $("#hidden1").attr('value', allImageInfo.MEDIA_ID);
+          $("#hidden2").attr('value', " " + allImageInfo.ALBUM_ID);
+        });
+        $('.btn-default').on('click', function(event) {
+          event.preventDefault();
+          $("#commentArea").empty();
+          $("#ratingArea").empty();
+        });
+      });
+

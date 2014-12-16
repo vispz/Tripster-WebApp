@@ -1,0 +1,51 @@
+body {
+  background-image: url('/images/shl.png')
+}
+
+.nav .container-fluid{
+     list-style: none;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+       background-color: #000333;
+    height:75px;
+}
+
+.header h1{
+	color: #3366ff;
+	font-size: 40px;
+  font-weight: bold;
+ display: inline-block; 
+  margin-left: 600px;
+
+  font-family: 'Droid Serif', serif;
+}
+
+.nav a {
+color: #3366ff;
+  font-size: 20px;
+  font-weight: bold;
+  padding-left: 15px; 
+  padding: 14px 10px;
+  display: inline-block;
+  text-align: center;  
+  font-family: 'Droid Serif', serif;
+}
+
+.navbar-header a{
+	       color: #fffff8;
+	       font-size: 40px;
+  	       font-weight: bold;
+  	       display: block;
+
+}
+
+ .mytrips .display .albums .row {
+ 	  background-size: 80px 60px;
+ 	  margin-left:100px;
+	  margin-top: 100px;
+  font-size: 30px;
+  font-weight: bold;
+  height: 45px;
+}
+ 

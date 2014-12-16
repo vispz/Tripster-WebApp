@@ -1,0 +1,137 @@
+doctype html
+html
+  head
+    link(href='/stylesheets/tripspage.css', rel='stylesheet')
+    |     
+    link(rel='stylesheet', href='http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+    |     
+    link(href='/stylesheets/bootstrap.css', rel='stylesheet')
+    |     
+    link(href='http://fonts.googleapis.com/css?family=Droid+Serif', rel='stylesheet', type='text/css')
+    |     
+    title Bootstrap Case
+    |     
+    meta(charset='utf-8')
+    |     
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    |     
+    link(rel='stylesheet', href='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css')
+  |   
+  |   
+  body
+    // navigation bar
+    .nav
+      .container-fluid
+        .navbar-header
+          a.navbar-brand(href='/login?username=lsn&password=password') Tripster
+        |         
+        .pull-right
+          ul.nav.navbar-nav
+            li.active
+              a(href='/mytrips?username=#{username}') My Trips
+            
+    // heading
+    .header
+      h1 #{title}
+    .invitation
+      input(type='submit',value='Invite Friends!', method='POST')
+    // rating trip
+    //Radio button template used from www.bootsnipp.com/forms
+    .row
+      .col-md-6
+        form.form-horizontal(method='POST', action='/tripspage?tripid=#{tid}')
+          fieldset
+            // Form Name
+            legend
+              | Rate the Trip
+            // Multiple Radios (inline)
+            .control-group
+              label.control-label(for='rating')
+              |               
+              .controls
+                label.radio.inline(for='rating-0')
+                  input#rating-0(type='radio', name='rating', value='1', checked='checked')
+                  i
+                  |1
+                |                 
+                label.radio.inline(for='rating-1')
+                  input#rating-1(type='radio', name='rating', value='2')
+                  i
+                  |2
+                |                 
+                label.radio.inline(for='rating-2')
+                  input#rating-2(type='radio', name='rating', value='3')
+                  i
+                  |3
+                |                 
+                label.radio.inline(for='rating-3')
+                  input#rating-3(type='radio', name='rating', value='4')
+                  i
+                  |4
+                |                 
+                label.radio.inline(for='rating-4')
+                  input#rating-4(type='radio', name='rating', value='5')
+                  i
+                  |5
+            .control-group
+              label.control-label(for='ratebutton')
+              |   
+              .controls
+                input(type='submit', value='Rate it!') 
+      |       
+      .col-md-6
+        form.form-horizontal
+          fieldset
+            legend Trip Rating : #{rate} / 5
+
+    // end of row
+    // blocking the data
+    .row
+      .col-md-4
+        .album
+          .thumbnail
+            label View Albums
+              a(href='/viewalbums?tripid=#{tid}')
+                img(src='/images/albumsicon.jpg')
+      // code for Comment Box is taken as a template from the following website: http://codepen.io/magnus16/pen/buGiB/
+      |     
+      .col-md-4
+        .detailBox
+          .titleBox
+            label Comment Box
+            // <button type="button" class="close" aria-hidden="true">&times;</button>
+          |         
+          .commentBox
+            p.taskDescription People commented:
+          |         
+          .actionBox
+            ul.commentList
+              for comm in result
+                li
+                  .commenterImage
+                    img(src='#{comm.PHOTO_URL}', width='4', height='30')
+                  |                 
+                  .commentText
+                    p #{comm.COMMENTS}
+                    |  
+                    span.person by #{comm.FIRSTNAME} #{comm.LASTNAME}
+              
+            |           
+            form.form-inline(method='POST')
+              .form-group
+                input.form-control(type='text', placeholder='Your comments', name="comment")
+              |             
+              .form-group
+                input(type='submit', value='Post')
+          // end of action box
+        // end of detail box
+      |     
+      .col-md-4
+        .participants
+          table.table.table-hover(name='Trip Members') 
+            label Trip Members
+                for member in mem
+                  tr
+                    td #{member.FIRSTNAME} #{member.LASTNAME} 
+
+    // end of row 2

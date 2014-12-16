@@ -9,7 +9,7 @@ var connectData = {
 		"database": "TRIPSTER" };
 var oracle =  require("oracle");
 
-function queryDb(res, req, isPost)
+function query1(res, req, isPost)
 {	
 	var username = req.session.name;
 	if (isPost)
@@ -38,9 +38,44 @@ function queryDb(res, req, isPost)
 					} 
 					else 
 					{	
-						if (isPost)
-							res.redirect( '/login');
-						else
+						query2(res, req, isPost);
+					}
+				}); // end connection.execute
+		}
+	}); // end oracle.connect
+
+}
+
+
+function query2(res, req, isPost)
+{	
+	var username = req.session.name;
+	if (isPost)
+		var friend_username = req.body.submitAddFriend;
+	else
+		var friend_username = req.query.submitAddFriend;
+
+	oracle.connect(connectData, function(err, connection) {
+		if ( err ) {
+			console.log(err);
+		} else {
+			
+			var cmd;
+			cmd = "INSERT INTO friends(username1, username2, status, sent_by) "+
+				" VALUES( '"+ friend_username+"' , '"+ username+"'"+ ", 'pending', '"+ 
+				username+"' )";
+				
+			console.log(cmd);
+			connection.execute(cmd, 
+						[], 
+				function(err, dbRetVals) 
+				{
+					if ( err ) 
+					{
+						console.log(err);
+					} 
+					else 
+					{	
 							res.redirect('/login' );
 					}
 				}); // end connection.execute
@@ -48,6 +83,8 @@ function queryDb(res, req, isPost)
 	}); // end oracle.connect
 
 }
+
+
 /* GET home page. */
  router.get('/', function(req, res) {
 	if(!req.session.name){
@@ -60,10 +97,12 @@ function queryDb(res, req, isPost)
 	else{
 		console.log("Req query for friendAcceptance : "+req.query);
 	
-		queryDb(res,req, false);
+		query1(res,req, false);
 	}
 	//res.send( JSON.stringify(req.body.submitAddFriend.results ) );
 });
+
+
 
 /////
 /* GET home page. */
@@ -79,7 +118,7 @@ router.post('/', function(req, res) {
 	}
 	else
 	{
-		queryDb(res,req, true);
+		query1(res,req, true);
 	}
 	//res.send( JSON.stringify(req.body.submitAddFriend.results ) );
 });

@@ -24,7 +24,8 @@ html(lang='en')
     link(href='/stylesheets/morris.css', rel='stylesheet')
     // Custom Fonts
     link(href='/stylesheets/font-awesome.min.css', rel='stylesheet', type='text/css')
-    //block header     
+    block header     
+    
     style(type='text/css').
       .friendReqPic {
       max-width:100%;
@@ -222,6 +223,11 @@ html(lang='en')
 
                         
                 // /input-group
+               |               
+              li
+                a.active(href='/dreamList')
+                  i.fa.fa-heart.fa-fw
+                  | Dream List
               |               
               li
                 a.active(href='/editprofile')
