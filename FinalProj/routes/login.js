@@ -9,6 +9,24 @@ var connectData = {
 		"database": "TRIPSTER" };
 var oracle =  require("oracle");
 
+var Db = require('mongodb').Db,
+ MongoClient = require('mongodb').MongoClient,
+ Server = require('mongodb').Server,
+ ReplSetServers = require('mongodb').ReplSetServers,
+ ObjectID = require('mongodb').ObjectID,
+ Binary = require('mongodb').Binary,
+ GridStore = require('mongodb').GridStore,
+ Grid = require('mongodb').Grid,
+ Code = require('mongodb').Code,
+ BSON = require('mongodb').pure().BSON,
+ assert = require('assert');
+var sys = require('sys');
+var base64_encode = require('base64').encode;
+var Buffer1 = require('buffer').Buffer;
+var http = require('http');
+var request = require('request');
+
+
 LoginErrorCodeEnum = {
 	    CONNECTION_ERROR : 0,
 	    INCORRECT_ID_PASSWORD : 1
@@ -57,9 +75,20 @@ function query_db(req, res, username, password) {
 						console.log(results);
 						console.log("length : ", results.length);
 						connection.close(); // done with the connection
+
+						wrapProfilePhoto(res,req,results,0,username);
 						
 						//success
-						if(results.length!=0)
+						
+					}
+	
+				}); // end connection.execute
+		}
+	}); // end oracle.connect
+}
+
+function setsession(res,req,results,username,errorcode) {
+if(results.length!=0)
 						{	
 							console.log("\n\n\nUser info : ", results);
 							console.log("Photo url : ", results[0].PHOTO_URL);
@@ -78,11 +107,158 @@ function query_db(req, res, username, password) {
 						{	
 							handleLoginError(res, LoginErrorCodeEnum.INCORRECT_ID_PASSWORD);
 						}
-					}
-	
-				}); // end connection.execute
-		}
-	}); // end oracle.connect
+}
+
+function wrapProfilePhoto(res, req, results, index,username) {
+
+        console.log("enter wrap media");
+        console.log(index);
+
+        if (index == results.length) {
+            setsession(res,req,results,username, LoginErrorCodeEnum.INCORRECT_ID_PASSWORD);
+            return;
+        }
+
+        //connects to mongo client and database running at port 27017
+        MongoClient.connect('mongodb://127.0.0.1:27017/media', function(err, db) {
+
+            if (!err) {
+                console.log("We are connected");
+            } else {
+                return;
+            }
+            //placing the media id in check id and asking gridstore if the id exists
+            var checkid = results[index].PHOTO_URL.toString();
+
+            GridStore.exist(db, checkid, function(err, result) { //check if the file that we pushed to gridstore exists
+                console.log("are we in gridstore exists????????????");
+                if(result) {
+                    console.log("exists is 1, that means found in cache!!!!");
+                    getCacheUserPhoto(res,req,db,results,index,username);
+
+                }
+                else if(!result) {
+                    console.log("aDid not find in cache :( !!!");
+                    addToCacheUserPhoto(res,req,db,results,index,username);
+
+                }
+                else if(err) {
+                    console.log("Error occured");
+                    return;
+                }
+                else {
+                    console.log(result);
+                    console.log(exists);
+                    console.log(err);
+
+                }
+
+                console.log("gridstore exists function closes!");
+            });
+
+
+       });
+    } //end of function
+
+
+function getCacheUserPhoto(res,req,db,results,index,username) {
+ //reading the data from mongodb for checkid and storing it in fileData: this is the image in binary
+
+                    var hasImage;
+                    console.log("Data is in Cache!");
+                    GridStore.read(db, results[index].PHOTO_URL.toString(), function(err, fileData) { //to read the data from the grid store. now this data will be in binary
+
+                        //var buf = new Buffer(fileData, 'base64'); // Ta-da
+                        console.log("reading image in base 64 done");
+                        // read all the data in base64 format string
+                        console.log('Done');
+
+                        hasImage = true;
+                        results[index].PHOTO_URL="data:image/jpeg;base64,"+fileData.toString('base64'); //setting the image in the JSON
+                        results[index].hasImage = true; //setting the property that the JSON contains the image at the index
+                        //res.write(fileData, 'binary');
+                        //res.end(fileData,'binary');
+                        //console.log(fileData);
+                        //console.log('Really done');
+                        console.log(results[index].PHOTO_URL);
+                        db.close(); //i have obtained the cached data and i close the database
+                        wrapProfilePhoto(res, req, results, index + 1,username);
+
+                    }); //end of gridstore read
+
+
+}
+
+function addToCacheUserPhoto(res,req,db,results,index,username) {
+ console.log("Data is NOT in cache, so cache it ! ");
+
+ var hasImage;
+                    hasImage = false;
+                    results.image = null;
+                    results.hasImage = false; //setting the property that the JSON  doesn't contain the image at the index
+                    var fileId = results[index].PHOTO_URL.toString();
+                    var urlm = results[index].PHOTO_URL;
+                    console.log("FILEID : ", fileId);
+                    console.log("URLM : ", urlm);
+                    var gridStore = new GridStore(db, fileId, 'w');
+                    gridStore.chunkSize = 1024 * 256;
+                    // Open the file
+                    gridStore.open(function(err, gridStore) {
+                        console.log("gridstore open!");
+                        http.get(urlm, function(response) {
+                            //this is the http request and we get a response and the body
+                            response.setEncoding('binary');
+                            var image2 = '';
+                            console.log(urlm);
+                            console.log('reading data in chunks first');
+                                response.on('data', function(chunk){
+                                      image2 += chunk;
+                                    console.log('reading data');
+                                  });
+
+                                response.on('end', function() {
+
+                            console.log("requesting HTTTP DONE!");
+                            var image = new Buffer(image2, 'binary'); //we take this body in binary form
+                            console.log("CONVERTING FILE TO BINARY, DONE!");
+                            // Write some data to the file
+                            gridStore.write(image, function(err, gridStore) { // the opened gridstore file is written with the binary image
+
+                                assert.equal(null, err);
+                                if (!err)
+                                    console.log("WRITING THE IMAGE DONE! ", err);
+                                else
+                                    console.log("Error occurred"); // Close (Flushes the data to MongoDB)
+                                gridStore.close(function(err, result) { //the gridstore file is closed()
+                                    assert.equal(null, err);
+
+                                    // Verify that the file exists
+                                    GridStore.exist(db, fileId, function(err, result) { //check if the file that we pushed to gridstore exists
+                                        assert.equal(null, err);
+                                        assert.equal(true, result);
+
+                                        // Read back all the written content and verify the correctness
+                                        GridStore.read(db, fileId, function(err, fileData) { //to read the data from the grid store. now this data will be in binary
+                                            assert.equal(image.toString('base64'), fileData.toString('base64'));
+
+                                            console.log("reading image in base 64 done");
+                                            // read all the data in base64 format string
+                                            console.log('Done');
+                                            console.log(typeof(fileData));
+                                            db.close();
+                                            wrapProfilePhoto(res, req, results, index + 1,username);
+
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    }).on('error', function(e) {
+                        console.log("Got error: " + e.message);
+                        wrapProfilePhoto(res, req, results, index + 1,username);
+                    });
+            });
+
 }
 
 
@@ -315,12 +491,164 @@ function loadAlbumsNewsFeed(res, req, username, newsfeed_trips, toRender)
 					{	
 						//success
 						console.log("\n\nnewsfeed_albums info : ", newsfeed_albums);
-						render_home(res, req, username, newsfeed_albums, newsfeed_trips);
+						wrapAlbumNewsfeed(res,req,username,newsfeed_albums,newsfeed_trips,0);
+						
 					}
 	
 				}); // end connection.execute
 		}
 	}); // end oracle.connect	
+}
+
+
+function wrapAlbumNewsfeed(res,req,username,results,newsfeed_trips,index){
+	console.log("enter wrap media");
+        console.log(index);
+        
+        if (index == results.length) {
+            userRecommendations(res,req,username,results,newsfeed_trips);
+            return;
+        }
+
+        //connects to mongo client and database running at port 27017
+        MongoClient.connect('mongodb://127.0.0.1:27017/media', function(err, db) {
+
+            if (!err) {
+                console.log("We are connected");
+            } else {
+                return;
+            }
+            //placing the media id in check id and asking gridstore if the id exists  
+            var checkid = results[index].PHOTO_URL.toString();
+
+            GridStore.exist(db, checkid, function(err, result) { //check if the file that we pushed to gridstore exists
+                console.log("are we in gridstore exists????????????");
+                if(result) {
+                    console.log("exists is 1, that means found in cache!!!!");
+                    getcache(res,req,db,username,results,newsfeed_trips,index);
+
+                }
+                else if(!result) {
+                    console.log("aDid not find in cache :( !!!");
+                    addToCache(res,req,db,username,results,newsfeed_trips,index);
+
+                }
+                else if(err) {
+                    console.log("Error occured");
+                    return;
+                }
+                else {
+                    console.log(result);
+                    console.log(exists);
+                    console.log(err);
+
+                }
+            
+                console.log("gridstore exists function closes!");
+            });
+            
+        
+       });
+}
+
+function getcache(res,req,db,username,results,newsfeed_trips,index) {
+ //reading the data from mongodb for checkid and storing it in fileData: this is the image in binary
+
+                    var hasImage;
+                    console.log("Data is in Cache!");
+                    GridStore.read(db, results[index].PHOTO_URL.toString(), function(err, fileData) { //to read the data from the grid store. now this data will be in binary
+
+                        //var buf = new Buffer(fileData, 'base64'); // Ta-da
+                        console.log("reading image in base 64 done");
+                        // read all the data in base64 format string 
+                        console.log('Done');
+
+                        hasImage = true;
+                        results[index].PHOTO_URL="data:image/jpeg;base64,"+fileData.toString('base64'); //setting the image in the JSON
+                        results[index].hasImage = true; //setting the property that the JSON contains the image at the index
+                        //res.write(fileData, 'binary');
+                        //res.end(fileData,'binary');
+                        //console.log(fileData);
+                        //console.log('Really done');
+                        console.log(results[index].image);
+                        db.close(); //i have obtained the cached data and i close the database
+                        wrapAlbumNewsfeed(res,req,username,results,newsfeed_trips,index+1);
+
+                    }); //end of gridstore read   
+                
+
+}
+
+function addToCache(res,req,db,username,results,newsfeed_trips,index) {
+ console.log("Data is NOT in cache, so cache it ! ");
+
+ var hasImage;
+                    hasImage = false;
+                    results.image = null;
+                    results.hasImage = false; //setting the property that the JSON  doesn't contain the image at the index
+                    var fileId = results[index].PHOTO_URL.toString();
+                    var urlm = results[index].PHOTO_URL;
+                    console.log("FILEID : ", fileId);
+                    console.log("URLM : ", urlm);
+                    var gridStore = new GridStore(db, fileId, 'w');
+                    gridStore.chunkSize = 1024 * 256;
+                    // Open the file
+                    gridStore.open(function(err, gridStore) {
+                        console.log("gridstore open!");
+                        http.get(urlm, function(response) {
+                            //this is the http request and we get a response and the body
+                            response.setEncoding('binary');
+                            var image2 = '';
+                            console.log(urlm);
+                            console.log('reading data in chunks first');
+                                response.on('data', function(chunk){
+                                      image2 += chunk;
+                                    console.log('reading data');
+                                  });
+                                
+                                response.on('end', function() {
+
+                            console.log("requesting HTTTP DONE!");
+                            var image = new Buffer(image2, 'binary'); //we take this body in binary form 
+                            console.log("CONVERTING FILE TO BINARY, DONE!");
+                            // Write some data to the file
+                            gridStore.write(image, function(err, gridStore) { // the opened gridstore file is written with the binary image
+
+                                assert.equal(null, err);
+                                if (!err)
+                                    console.log("WRITING THE IMAGE DONE! ", err);
+                                else
+                                    console.log("Error occurred"); // Close (Flushes the data to MongoDB)
+                                gridStore.close(function(err, result) { //the gridstore file is closed()
+                                    assert.equal(null, err);
+
+                                    // Verify that the file exists
+                                    GridStore.exist(db, fileId, function(err, result) { //check if the file that we pushed to gridstore exists
+                                        assert.equal(null, err);
+                                        assert.equal(true, result);
+
+                                        // Read back all the written content and verify the correctness
+                                        GridStore.read(db, fileId, function(err, fileData) { //to read the data from the grid store. now this data will be in binary
+                                            assert.equal(image.toString('base64'), fileData.toString('base64'));
+
+                                            console.log("reading image in base 64 done");
+                                            // read all the data in base64 format string 
+                                            console.log('Done');
+                                            console.log(typeof(fileData));
+                                            db.close();
+                                            wrapAlbumNewsfeed(res,req,username,results,newsfeed_trips,index+1);
+                                         
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    }).on('error', function(e) {
+                        console.log("Got error: " + e.message);
+                        wrapAlbumNewsfeed(res,req,username,results,newsfeed_trips,index+1);
+                    });
+            });
+
 }
 
 /*
@@ -355,11 +683,62 @@ function handleLoginError(res, errorCode){
 //res = HTTP result object sent back to the client
 //name = Name to query for
 //results = List object of query results
-function render_home(res, req,username,newsfeed_albums, newsfeed_trips) {
+
+function userRecommendations(res,req,username,newsfeed_albums,newsfeed_trips){
+	var myquery = "WITH MYTRIPS AS ( "
++"SELECT P.TRIP_ID AS TRIP_ID FROM PARTICIPATES P "
++"INNER JOIN TRIPS T ON T.ID = P.TRIP_ID "
++"WHERE P.USERNAME = '"+username+"' OR T.ADMIN = '"+username+"'), "
++"MYFRIENDS AS( "
++"SELECT F.USERNAME2 AS FRIEND FROM FRIENDS F "
++"WHERE F.USERNAME1 = '"+username+"'"
++")"
++" SELECT U.USERNAME, U.FIRSTNAME,U.LASTNAME, U.PHOTO_URL FROM USERS U INNER JOIN PARTICIPATES P ON P.USERNAME=U.USERNAME "
++"WHERE ((P.TRIP_ID IN (SELECT M.TRIP_ID FROM MYTRIPS M)) "+
+	"AND P.USERNAME NOT IN (SELECT MF.FRIEND FROM MYFRIENDS MF) AND P.USERNAME != '"+username+"')";
+oracle.connect(connectData, function(err, connection) {
+	if (err) { console.log("Error connecting to db:", err); return; }
+    connection.execute(myquery, [], function(err,urecommendation) {
+    	if(err) {console.log("Error executing query: ",err); return;}
+    	console.log(urecommendation);
+    	connection.close();
+    	locationRecommendation(res,req,username,newsfeed_albums,newsfeed_trips,urecommendation);
+    });
+});
+}
+
+function locationRecommendation(res,req,username,newsfeed_albums,newsfeed_trips,urecommendation){
+
+	oracle.connect(connectData, function(err, connection) {
+		if (err) {
+			console.log(err);
+		} else {
+			connection.execute("SELECT DISTINCT L.NAME as NAME, L.ID as ID FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID " +
+				"INNER JOIN PARTICIPATES P ON P.TRIP_ID = T.TRIP_ID " +
+				"INNER JOIN FRIENDS F ON F.USERNAME1 = P.USERNAME WHERE F.USERNAME2 = '" + username +"'",
+				[],
+				function(err, lrecommendation) {
+					if (err) {
+						console.log(err);
+					} else {
+						connection.close();
+						render_home(res, req,username,newsfeed_albums, newsfeed_trips,urecommendation,lrecommendation);
+					}
+				});
+		}
+	});
+}
+
+
+
+
+function render_home(res, req,username,newsfeed_albums, newsfeed_trips,urecommendation,lrecommendation) {
 	console.log("REQ SESSION : ", req.session);
 	var retVal = { results: req.session,
 					newsfeed_trips : newsfeed_trips,
-					newsfeed_albums : newsfeed_albums };
+					newsfeed_albums : newsfeed_albums,
+					ureco : urecommendation,
+					lreco : lrecommendation };
 	console.log("LOGIN -> HOME VALS : ", retVal);
 	res.render('home.jade', retVal);
 }

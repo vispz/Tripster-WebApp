@@ -7,7 +7,7 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username = 'lsn';
+var username;
 var album_id; // Set during get
 var media_id; // Set during post
 var loc_id; // Set during post
@@ -17,6 +17,7 @@ var type; // Set during post
 
 
 router.get('/', function(req, res) {
+	username = req.session.name;
 	album_id = req.query.albumid;
 	res.render('addmedia', {album: album_id});
 });
@@ -73,7 +74,7 @@ function add_media(res) {
 			console.log(err);
 		} else {
 			//console.log(album_id + " " + media_id + " " + caption + " " + loc_id + " " + imageurl + " " + type);
-			var cmd = "INSERT INTO MEDIA VALUES(" + media_id + ", " + "'" + caption + "'" + ", " + loc_id + ", " + "'" + imageurl + "'" + ", " + album_id + ", " + "'" + type + "'" + ")";
+			var cmd = "INSERT INTO MEDIA VALUES(" + media_id + ", " + "'" + caption + "'" + ", " + loc_id + ", " + "'" + imageurl + "'" + ", " + album_id + ", " + "'" + type + "', " + null+")";
 			connection.execute(cmd,
 				[],
 				function(err, results) {
