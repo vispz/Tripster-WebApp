@@ -11,10 +11,21 @@ var yelp = require("yelp").createClient({
 var location = "Philadephia"
 
 router.get('/',function(req,res){
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	yelp.search({term: "food", location: location, limit: 5, sort: 2}, function(error, data) {
 	  console.log(error);
 	  res.render('yelp', {yelp : data});
 	});
+	}
 });
 
 module.exports = router; 

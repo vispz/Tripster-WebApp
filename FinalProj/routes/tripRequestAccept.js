@@ -70,9 +70,19 @@ function queryDb(res, req)
 /////
 /* GET home page. */
 router.get('/', function(req, res) {
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	console.log("Req query for tripAcceptance : "+req.query)
 	queryDb(res,req);
-	
+	}
 });
 
 module.exports = router;

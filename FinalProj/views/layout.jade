@@ -24,7 +24,8 @@ html(lang='en')
     link(href='/stylesheets/morris.css', rel='stylesheet')
     // Custom Fonts
     link(href='/stylesheets/font-awesome.min.css', rel='stylesheet', type='text/css')
-    //block header     
+    block header     
+    
     style(type='text/css').
       .friendReqPic {
       max-width:100%;
@@ -105,7 +106,7 @@ html(lang='en')
               i.fa.fa-caret-down
             |             
             ul.dropdown-menu.dropdown-messages
-              - console.log("\n\n\n\n\n\n\n results:", results, "\nresults.trip_requests: ", results.trip_requests, "len : ", len)
+              //- console.log("\n\n\n\n\n\n\n results:", results, "\nresults.trip_requests: ", results.trip_requests, "len : ", len)
               - var len = results.trip_requests.length
               //- each trip_var in results.trip_requests    
               - var maxNum = 5
@@ -134,7 +135,6 @@ html(lang='en')
                   |               
                   li.divider
               if (len == 0)
-                - console.log("In here len 0")
                 |               
                 |               
                 li
@@ -192,6 +192,26 @@ html(lang='en')
                           input(type="checkbox", name="location_search", value="location")
                           i.fa.fa-send.fa-fw
                           | Location
+
+              li.sidebar-search
+                  form.form(method='get', action='/bing', role='form', name='searchForm')
+                      .row
+                        .col-sm-9
+                          input.form-control(type='text', placeholder='Bing..', name='bingSearch')              
+                        .col-sm-3
+                          button.btn.btn-default(type='submit' value="submit" )
+                            i.fa.fa-search
+                      .row
+                        .col-sm-6
+                          input(type="checkbox", name="bing_web_search", value="bing_web", checked="checked")
+                          i.fa.fa-bullseye.fa-fw
+                          | Bing Web
+                        .col-sm-6
+                          input(type="checkbox", name="bing_image_search", value="bing_image")
+                          i.fa.fa-image.fa-fw
+                          | Bing Image
+
+
                         //- .col-sm-4
                         //-   input(type="checkbox", name="trip_search", value="trip")
                         //-   i.fa.fa-send.fa-fw
@@ -202,6 +222,11 @@ html(lang='en')
 
                         
                 // /input-group
+               |               
+              li
+                a.active(href='/dreamList')
+                  i.fa.fa-heart.fa-fw
+                  | Dream List
               |               
               li
                 a.active(href='/editprofile')

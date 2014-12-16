@@ -16,7 +16,7 @@ block body
                 i.fa.fa-glass.fa-5x
               |                   
               .col-xs-9.text-right
-                .huge #{results.no_trips}
+                .huge 
                 |                     
                 div Your Trips
           a(href='/mytrips')
@@ -35,10 +35,10 @@ block body
                 i.fa.fa-image.fa-5x
               |                   
               .col-xs-9.text-right
-                .huge #{results.no_albums}
+                .huge 
                 |                     
                 div Your Albums
-          a(href='/myAlbums')
+          a(href='/myalbums')
             .panel-footer
               span.pull-left View Details
               span.pull-right
@@ -54,10 +54,10 @@ block body
                 i.fa.fa-users.fa-5x
               |                   
               .col-xs-9.text-right
-                .huge #{results.no_friends}
+                .huge 
                 |                     
                 div Your Friends
-          a(href='#')
+          a(href='/myfriends')
             .panel-footer
               span.pull-left View Details
               span.pull-right
@@ -75,7 +75,7 @@ block body
           .panel-body
             ul.timeline
                 - var itr = 0
-                - console.log(newsfeed_trips)
+                //- console.log(newsfeed_trips)
                 each trip_var in newsfeed_trips   
                     if ( ( itr++ % 2) == 0)             
                       li
@@ -89,7 +89,7 @@ block body
                           .timeline-body
                             p
                               | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined 
-                            a(href='/mytrips/?tripid='+trip_var.TRIP_ID)
+                            a(href='/tripspage?tripid='+trip_var.TRIP_ID)
                               strong #{trip_var.TRIP_NAME}.
                     else                   
                       li.timeline-inverted
@@ -103,11 +103,11 @@ block body
                           .timeline-body
                             p
                               | #{trip_var.FRIEND_FIRSTNAME}, #{trip_var.FRIEND_LASTNAME} joined 
-                            a(href='/trips/?tripid='+trip_var.TRIP_ID)
+                            a(href='/tripspage?tripid='+trip_var.TRIP_ID)
                               strong #{trip_var.TRIP_NAME}.
                 // ALBUM TIMELINE     
                 - var itr = 0
-                - console.log(newsfeed_albums)
+                //- console.log(newsfeed_albums)
                 each album_var in newsfeed_albums  
                     if ( ( itr++ % 2) == 0)             
                       li
@@ -121,7 +121,7 @@ block body
                           .timeline-body
                             p
                               | #{album_var.FRIEND_FIRSTNAME}, #{album_var.FRIEND_LASTNAME} created a new album 
-                            a(href='/albums/?albumid='+album_var.ALBUM_ID)
+                            a(href='/media?albumid='+album_var.ALBUM_ID)
                               strong #{album_var.ALBUM_NAME}. 
                               img(src=album_var.PHOTO_URL, alt='profilePic', align='center', width = "100%")
                     else                   
@@ -136,7 +136,7 @@ block body
                           .timeline-body
                             p
                               | #{album_var.FRIEND_FIRSTNAME}, #{album_var.FRIEND_LASTNAME} created a new album 
-                            a(href='/albums/?albumid='+album_var.ALBUM_ID)  
+                            a(href='/media?albumid='+album_var.ALBUM_ID)  
                               strong #{album_var.ALBUM_NAME}.
                               img(src=album_var.PHOTO_URL, alt='profilePic', align='center', width = "100%")
                 // ALBUM END TIMELINE     
@@ -152,32 +152,14 @@ block body
           // /.panel-heading
           .panel-body
             .list-group
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
-              |                 
-              |                 
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
-              |                 
-              |                 
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
-              |                 
-              |                 
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
+              for friend in ureco
+                  .row
+                    .col-md-7
+                      i.fa.fa-user.fa-fw
+                      | #{friend.FIRSTNAME} #{friend.LASTNAME}
+                    .col-md-4
+                      a.btn.btn-sm.btn-default(href='/addFriend?submitAddFriend='+friend.USERNAME) Add Friend
+                  br
             // /.list-group
             a.btn.btn-default.btn-block(href='#') View All Recommendations
           // /.panel-body
@@ -189,33 +171,15 @@ block body
           // /.panel-heading
           .panel-body
             .list-group
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
-              |                 
-              |                 
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
-              |                 
-              |                 
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
-              |                 
-              |                 
-              a.list-group-item(href='#')
-                i.fa.fa-comment.fa-fw
-                | New Comment
-                span.pull-right.text-muted.small
-                  em 4 minutes ago
-            // /.list-group
+              for loc in lreco
+                  .row
+                    .col-md-7
+                      i.fa.fa-send.fa-fw
+                      | #{loc.NAME}
+                    .col-md-4
+                      a.btn.btn-sm.btn-default(href='/addDreamList?submitAddDreamList='+loc.ID)  DreamList it
+                  br
+              // /.list-group
             a.btn.btn-default.btn-block(href='#') View All Recommendations
           // /.panel-body
         // /.panel

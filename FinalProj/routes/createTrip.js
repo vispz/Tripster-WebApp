@@ -19,15 +19,35 @@ var triplocations=[];
 var newid=[];
 /*get the createTrip page*/
 router.get('/',function(req,res){
-   admin = req.session.name;
-	getdata(res,req);
-
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
+        admin = req.session.name;
+	   getdata(res,req);
+    }
 });
 
 router.post('/', function(req,res) {
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
     console.log(req.body);
     getID(res,req);
-    
+    }
 });
 
 
@@ -150,7 +170,7 @@ function inserttrips(res,req)
 function wrapfindlocations(res,req){
    var locs= req.body.location;
     var loclist = locs.split(","); 
-    var index=loclist.length;
+    if (loclist.length<=0)  redirection(res);
     getnewlocations(res,req,0,loclist);
     //insertintotriploc(res,req,0);
     console.log("FINISHED INSERTING LOCATIONS AND TRIP LOCATIONS");
@@ -160,10 +180,11 @@ function getnewlocations(res,req,index,loclist){
     
      var len = loclist.length;
      if (index==len) return;
+     var locString = loclist[index].trim();
      
-     var  myquery = "SELECT L.ID AS LOCID FROM LOCATION L WHERE L.NAME = '"+loclist[index]+"'";
+     var  myquery = "SELECT L.ID AS LOCID FROM LOCATION L WHERE lower(L.NAME) = '"+locString.toLowerCase()+"'";
      //if the user types in a list of locations execute the code below
-     
+     console.log(locString);
         //query the database 
 
             //check for each element in array loclist, if it is present in the database
@@ -171,8 +192,7 @@ function getnewlocations(res,req,index,loclist){
     
     // var locvalue = loclist[i].replace(/^\s+|\s+$/g, "");
 
-    var locString = loclist[index];
-    console.log(locString);
+   
     console.log(myquery);
     oracle.connect(connectData, function(err,connection)
     {
@@ -194,7 +214,7 @@ function getnewlocations(res,req,index,loclist){
 
             } else {
                 triplocations.push(results[0].LOCID);
-                getnewlocations(res,req,++index,loclist);
+                getnewlocations(res,req,index+1,loclist);
             }
 
             if (index == loclist.length-1)
@@ -213,6 +233,7 @@ function getnewlocations(res,req,index,loclist){
 function addlocation(res,req,index,locationid,locationname,loclist) {
 
     
+
     var insertquery = "INSERT INTO LOCATION(ID, NAME) VALUES("+locationid+", '"+locationname+"')";
     console.log(insertquery);
             oracle.connect(connectData, function(err,connection)
@@ -224,7 +245,7 @@ function addlocation(res,req,index,locationid,locationname,loclist) {
                     console.log(results);
                     connection.close();
                     console.log("added 1 location successfully!");
-                    getnewlocations(res,req,++index,loclist)
+                    getnewlocations(res,req,index+1,loclist)
                 });
             });
 }
@@ -243,7 +264,7 @@ function insertintotriploc(res,req,index){
              if(err) {console.log("Error executing inserting trip query: ",err); return;}
              console.log(results);
              connection.close();
-             insertintotriploc(res,req,++index);
+             insertintotriploc(res,req,index+1);
              console.log("1 TRIP_LOCATION ADDED SUCCESSFULLY!");
              if(index==triplocations.length-1) 
                 findfriends(res,req);
@@ -252,74 +273,6 @@ function insertintotriploc(res,req,index){
 
 
 }
-
-
-function gettriplocations(res,req,index,loclist) {
-    var len = loclist.length;
-    if (index==len) return;
-    var  myquery = "SELECT L.ID FROM LOCATION L WHERE L.NAME = '"+loclist[index]+"'";
-    var locString = loclist[index];
-    console.log(locString);
-    console.log(myquery);
-    oracle.connect(connectData, function(err,connection)
-    {
-        connection.execute(myquery,[], function(err,results)
-        {
-
-            
-            if(err)  {console.log("Error executing query: ",err); return;}
-            console.log(results);
-            connection.close();
-            console.log("Done with the search!");
-            addtriplocation(res,req,index,loclist);
-        });
-    });
-
-}
-
-
-function addtriplocation(res,req,index,loclist){
-    var insertquery = "INSERT INTO TRIP_LOCATION(TRIP_ID, LOC_ID) VALUES("+tripid+", '"+locid+"')";
-    console.log(insertquery);
-            oracle.connect(connectData, function(err,connection)
-            {
-                if (err) { console.log("Error connecting to db:", err); return;}
-                connection.execute(insertquery,[], function(err,results) 
-                {  
-                    if(err)  {console.log("Error executing query: ",err); return;}
-                    console.log(results);
-                    connection.close();
-                    console.log("added 1 location successfully!");
-                    getnewlocations(res,req,++index,loclist)
-                });
-            });
-}
-
-
-
-
-function inserttriplocations(res,req,locationlist){
-    for (i=0 ; i<locationlist.length; i++) {
-            var insertquery = "INSERT INTO TRIP_LOCATION(TRIP_ID,LOCATION_ID) VALUES ("+tripid+", "+loclist[i]+")";
-            console.log(insertquery);
-            oracle.connect(connectData, function(err,connection)
-            {
-                if (err) { console.log("Error connecting to db:", err); return;}
-                connection.execute(insertquery,[], function(err,results)
-                {
-                    
-                    if(err)  {console.log("Error executing query: ",err); return;}
-                    console.log(results);
-                    connection.close();
-                    console.log("1 TRIP LOCATION INSERTED!");
-                    findfriends(res,req);
-                    
-                    
-                });
-            });
-        }
-}
-
 
 /*method to check friends who are going to the trip and inserting username in an array*/
 function findfriends(res,req){
@@ -349,7 +302,7 @@ function findfriends(res,req){
         }
         friendlist.push(admin);
 
-    }
+    } else friendlist.push(admin);
     
    
     /* adding the friend usernames to the participates table*/
@@ -360,7 +313,7 @@ function findfriends(res,req){
 /* adding the friends username to the participates table*/
 function insertparticipates(res,req,friendlist,index) {
     var len = friendlist.length;
-    if (index==len) return;
+    if (index==len || len==0) return;
     oracle.connect(connectData, function(err,connection)
             {
                
@@ -392,34 +345,6 @@ function redirection(res) {
     var url="/mytrips?username="+admin;
     res.redirect(url);
 }
-
-/*for inserting multiple insert entries*/
-function multiparticipant(participant){
-    console.log("multiparticipants");
-    if(tripid){
-    oracle.connect(connectData, function(err,connection)
-            {
-               
-                if (err) { console.log("Error connecting to db:", err); return;}
-                  
-                        var newparticipant= "INSERT INTO PARTICIPATES(USERNAME, TRIP_ID,COMMENTS, RSVP,RATE) VALUES ('"
-                        + participant + "', " + tripid + ", " +null+ ", 'pending'" +", "+1+")" ;
-                        console.log(newparticipant);
-                        connection.execute(newparticipant,[],function(err,results)
-                            {
-                            if(err) {console.log("Error executing participates query: ",err); return;}
-                            console.log(results); 
-                            connection.close();
-                            console.log("inserted 1 PARTICIPANT successfully!");
-                            
-                             }); //end of connection to participates
-                     
-                 
-                    
-            });
-        }
-}
-    
 
 
     

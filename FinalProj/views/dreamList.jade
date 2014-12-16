@@ -1,0 +1,17 @@
+extend layout
+block body
+          
+    #page-wrapper(style='padding-top: 10px')
+      .panel.panel-default
+          .panel-heading
+            i.fa.fa-heart.fa-fw
+            | Your dream list
+          // /.panel-heading
+          .panel-body
+              .row
+                for dream in dream_results  
+                  .col-lg-offset-1.col-md-4
+                    .row
+                      | #{dream.NAME}
+                    br
+              

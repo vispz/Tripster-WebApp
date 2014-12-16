@@ -11,9 +11,20 @@ var username;
 var trip_id;
 
 router.get('/', function(req, res) {
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
 	username = req.session.name;
 	trip_id = req.query.tripid;
 	query_db(res);
+	}
 });
 
 function query_db(res) {
@@ -25,7 +36,7 @@ function query_db(res) {
 			" AND PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + 
 			username + "'";
 			console.log(cmd);
-			connection.execute(cmd,
+			connection.execute("SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id + " AND (PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + username + "')",
 				[],
 				function(err, results) {
 					if (err) {

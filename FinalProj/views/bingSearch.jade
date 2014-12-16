@@ -1,0 +1,54 @@
+extend layout
+//block header
+//  link(href='/stylesheets/datepicker.css', rel='stylesheet')
+mixin contentWeb
+  .panel.panel-default
+      .panel-heading
+        i.fa.fa-users.fa-fw
+        | Web Results
+      // /.panel-heading
+      .panel-body
+        each item in web_search
+            -console.log("item : ", item, "i : ", i)
+            .row
+              .col-lg-12
+                h3
+                  a(href=item.Url) #{item.Title}
+                p #{item.Description}
+
+mixin contentImage
+  .panel.panel-default
+      .panel-heading
+        i.fa.fa-image.fa-fw
+        | Image Results
+      // /.panel-heading
+      .panel-body
+        each item in image_search
+          -console.log("item : ", item, "i : ", i)
+          .row
+            .col-lg-12  
+              h3
+                a(href=item.SourceUrl) #{item.Title}
+                img(src=item.MediaUrl, alt='profilePic', align='center', width = "100%")
+              p #{item.Description}            
+          br
+
+block body
+  #page-wrapper(style='padding-top: 10px')
+    if (typeof(web_search)!=='undefined' && typeof(image_search)!=='undefined' )
+          -console.log('both are searched for')
+          .row
+            .col-lg-6
+              mixin contentWeb
+            .col-lg-6
+              mixin contentImage
+
+    else if (typeof(web_search) !== 'undefined')
+          -console.log('only user searched for')
+          mixin contentWeb
+
+    else if (typeof(image_search) !== 'undefined')
+          -console.log('only user searched for')
+          mixin contentImage
+
+

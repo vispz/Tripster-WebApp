@@ -10,7 +10,7 @@ router.get('/', function(req, res) {
 		req.session.destroy()
 	
 	console.log('In INDEX JS')
-  res.render('index.jade');
+  	res.render('index.jade');
 });
 
 

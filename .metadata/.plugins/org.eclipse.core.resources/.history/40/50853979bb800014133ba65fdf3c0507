@@ -1,0 +1,14 @@
+package edu.upenn.cis.cis550.server;
+
+public class random 
+{
+	String a = "WITH TripParticipates AS(" +
+			"SELECT trip\_id" +
+			"FROM Participares P" +
+			"WHERE P.username = '"+username+"')" +
+			"SELECT T.id AS trip\_id, T.name AS trip\_name" +
+			"FROM Trips T" +
+			"WHERE T.privacy = 'public'" +
+			"OR T.trip\_id IN (SELECT * FROM TripParticipates)" +
+			"OR T.admin = '"+username+"'";
+}

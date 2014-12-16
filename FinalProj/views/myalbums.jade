@@ -1,0 +1,16 @@
+extend layout
+block body
+    #page-wrapper(style='padding-top: 10px')
+      .panel.panel-default
+          .panel-heading
+            i.fa.fa-image.fa-fw
+            | My Albums
+          // /.panel-heading
+          .panel-body
+              .row
+                for album in albums
+                  .col-lg-offset-1.col-md-4
+                    .row
+                        a(href='/media' + '?albumid=' + album.ID)
+                          h3 #{album.NAME}
+                    br

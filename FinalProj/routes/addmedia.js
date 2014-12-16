@@ -7,7 +7,7 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username = 'lsn';
+var username;
 var album_id; // Set during get
 var media_id; // Set during post
 var loc_id; // Set during post
@@ -17,20 +17,42 @@ var type; // Set during post
 
 
 router.get('/', function(req, res) {
-	album_id = req.query.albumid;
-	res.render('addmedia', {album: album_id});
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
+		album_id = req.query.albumid;
+		res.render('addmedia', {album: album_id});
+	}
 });
 
 router.post('/', function(req, res) {
 	//res.send(req.body);
 	//res.send(album_id);
-	caption = req.body.caption;
-	imageurl = req.body.imageurl;
-	type = req.body.type;
-	album_id = req.body.albumid;
-	//res.send(req.body.albumid);
-	//res.send(album_id + " " + media_id + " " + caption + " " + loc_id + " " + imageurl + " " + type);
-	query_db(res, req);
+	if(!req.session.name)
+	{	
+		res.render('index.jade',
+						{
+							success : 0,
+							error : "Please log in first"
+						});
+	}
+	else
+	{
+		caption = req.body.caption;
+		imageurl = req.body.imageurl;
+		type = req.body.type;
+		album_id = req.body.albumid;
+		//res.send(req.body.albumid);
+		//res.send(album_id + " " + media_id + " " + caption + " " + loc_id + " " + imageurl + " " + type);
+		query_db(res, req);
+	}
 });
 
 // Queries the database and sets value for the new media_id and the loc_id associated with new media.
@@ -73,7 +95,7 @@ function add_media(res) {
 			console.log(err);
 		} else {
 			//console.log(album_id + " " + media_id + " " + caption + " " + loc_id + " " + imageurl + " " + type);
-			var cmd = "INSERT INTO MEDIA VALUES(" + media_id + ", " + "'" + caption + "'" + ", " + loc_id + ", " + "'" + imageurl + "'" + ", " + album_id + ", " + "'" + type + "'" + ")";
+			var cmd = "INSERT INTO MEDIA VALUES(" + media_id + ", " + "'" + caption + "'" + ", " + loc_id + ", " + "'" + imageurl + "'" + ", " + album_id + ", " + "'" + type + "'" + ", "+null+" )";
 			connection.execute(cmd,
 				[],
 				function(err, results) {

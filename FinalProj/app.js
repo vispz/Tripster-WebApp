@@ -22,14 +22,18 @@ var createTrip=require('./routes/createTrip');
 var tripspage=require('./routes/tripspage');
 var saveNewUserData=require('./routes/saveNewUserData');
 var addFriend=require('./routes/addFriend');
-// var addDreamList=require('./routes/addDreamList');
+var addDreamList=require('./routes/addDreamList');
+var dreamList=require('./routes/dreamList');
 var yelp = require('./routes/yelp');
-var test = require('./routes/test');
 //Mongo code
 var mongo = require('mongod');
 var monk = require('monk');
 var db = monk('localhost:27017/caching')
 var yelp = require('./routes/yelp');
+var locationrecommender = require('./routes/locationrecommender');
+var myalbums = require('./routes/myalbums');
+var bing = require('./routes/bing');
+var myfriends = require('./routes/myfriends');
 
 var MongoClient = require('mongodb');
 var session = require('express-session');
@@ -75,10 +79,14 @@ app.use('/tripspage',tripspage);
 app.use('/addmedia', addmedia);
 app.use('/saveNewUserData', saveNewUserData);
 app.use('/addFriend', addFriend);
-// app.use('/addDreamList', addDreamList);
+app.use('/addDreamList', addDreamList);
 app.use('/yelp', yelp);
+app.use('/locrec', locationrecommender);
+app.use('/myalbums', myalbums);
+app.use('/bing', bing);
+app.use('/dreamList', dreamList);
+app.use('/myfriends', myfriends);
 
-app.use('/test', test);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

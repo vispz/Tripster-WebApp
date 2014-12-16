@@ -26,20 +26,41 @@ var db = monk('localhost:27017/caching');
 /*get the mytrips page*/
 router.get('/',function(req,res){
 
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
    tripid = req.query.tripid;
    admin = req.session.name;
 
     //admin = 'FSpagMon';
     //tripid = 1;
    checkadminstatus(res);
+    }
 
     });
 
 router.post('/', function(req,res) {
-    
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
     getrating(res,req);
     getcomments(res,req);
     getinvite(res,req);
+    }
     
 });
 
@@ -61,6 +82,7 @@ function checkadminstatus(res){
                 console.log("admin");
                 console.log(admin);
                 if(admin===undefined) {
+                    alert("The admin has set the trip settings to private\nRedirecting to home page");
                     res.redirect('/login');
                 }
                 if(tripadmin==admin){
@@ -105,6 +127,7 @@ function checkmemberstatus(res,privacysetting) {
                         }
                     }
                     if (member==false){
+                        
                         res.redirect('/login');
                     }
 
@@ -128,9 +151,11 @@ function checkmemberstatus(res,privacysetting) {
                              console.log("going to get trip data");
                         }
                         else {
+                      
                         res.redirect('/login');
                         }
                     } else {
+                        
                         res.redirect('/login');
                     }
                     
@@ -226,7 +251,9 @@ function getTripLocation(res, tripresults, userresults, commentresults, memberre
         if (err) {
             console.log(err);
         } else {
-            connection.execute("SELECT L.NAME FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID WHERE T.TRIP_ID = " + tripid,
+            var cmd = "SELECT L.NAME FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID WHERE T.TRIP_ID = " + tripid;
+            console.log(cmd);
+            connection.execute(cmd,
                 [],
                 function(err, results) {
                     if (err) {

@@ -8,7 +8,7 @@ var connectData = {
 	database: "TRIPSTER"};
 
 var oracle = require("oracle");
-var username = 'lsn';
+var username;
 var album_id;
 
 var mongo = require('mongod');
@@ -37,18 +37,41 @@ var rating;
 
 router.get('/', function(req, res) {
 	
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
+	username = req.session.name;
 	album_id = req.query.albumid;
 	getMedia(res, req);
+    }
 });
 
 router.post('/', function(req, res) {
 	//res.send(req.body);
+    if(!req.session.name)
+    {   
+        res.render('index.jade',
+                        {
+                            success : 0,
+                            error : "Please log in first"
+                        });
+    }
+    else
+    {
+	username = req.session.name;
 	album_id = req.body.albumid;
 	media_ref = req.body.photoid;
 	comment = req.body.comments;
 	rating = req.body.ratings;
 	add_comments(res);
-
+    }
 	// if (req.body.comments != "") {
 	// 	add_comments(res, req.body.comments, req.body.photoid)
 	// } else if (req.body.ratings != "") {
@@ -149,8 +172,9 @@ function getMedia(res, req) {
 					} else {
 						console.log(results);
 						connection.close();
+                        if (results){
                         wrapmedia(res,req,results,0);
-		           
+		                } else getMediaResults(res, req, results);
    					//assigning object ID as the media ID
 	               }						
                 });

@@ -1,0 +1,88 @@
+body {
+  background-image: url('/images/shl.png')
+}
+
+.nav .container-fluid{
+     list-style: none;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+       background-color: #000333;
+    height:75px;
+}
+
+.header h1{
+  color: #3366ff;
+  font-size: 40px;
+  font-weight: bold;
+ display: inline-block; 
+  margin-left: 600px;
+
+  font-family: 'Droid Serif', serif;
+}
+
+.nav a {
+color: #3366ff;
+  font-size: 20px;
+  font-weight: bold;
+  padding-left: 15px; 
+  padding: 14px 10px;
+  display: inline-block;
+  text-align: center;  
+  font-family: 'Droid Serif', serif;
+}
+
+
+.navbar-header a{
+         color: #fffff8;
+         font-size: 40px;
+           font-weight: bold;
+           display: block;
+
+}
+
+/* 
+    Text fields 
+*/
+div.input-group-option:last-child span.input-group-addon-remove{
+    display: none;
+
+}
+
+div.input-group-option:last-child input.form-control{
+    border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+div.input-group-option span.input-group-addon-remove{
+  cursor: pointer;
+}
+
+div.input-group-option{
+    margin-bottom: 3px;
+}
+
+div.locations textarea{
+margin-top: 10px;
+width: 250px;
+
+}
+
+.form-horizontal{
+  margin-left: 50px;
+
+}
+
+
+.form-horizontal fieldset .controls select{
+  width:300px;
+  height:300px;
+}
+
+.done {
+  margin-top: 10px;
+  margin-right:400px;
+  margin-left:400px;
+}
+
+
