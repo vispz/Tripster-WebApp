@@ -7,10 +7,10 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username = 'FSpagMon'; // set to session
+var username;
 
 router.get('/', function(req, res) {
-	//username = req.session.name;
+	username = req.session.name;
 	query_db(res);
 });
 
