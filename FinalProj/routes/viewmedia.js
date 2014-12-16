@@ -8,7 +8,7 @@ var connectData = {
 	database: "TRIPSTER"};
 
 var oracle = require("oracle");
-var username = 'lsn';
+var username;
 var album_id;
 
 var mongo = require('mongod');
@@ -47,6 +47,7 @@ router.get('/', function(req, res) {
     }
     else
     {
+	username = req.session.name;
 	album_id = req.query.albumid;
 	getMedia(res, req);
     }
@@ -64,6 +65,7 @@ router.post('/', function(req, res) {
     }
     else
     {
+	username = req.session.name;
 	album_id = req.body.albumid;
 	media_ref = req.body.photoid;
 	comment = req.body.comments;

@@ -29,6 +29,8 @@ var mongo = require('mongod');
 var monk = require('monk');
 var db = monk('localhost:27017/caching')
 var yelp = require('./routes/yelp');
+var locationrecommender = require('./routes/locationrecommender');
+var myalbums = require('./routes/myalbums');
 
 var MongoClient = require('mongodb');
 var session = require('express-session');
@@ -76,6 +78,8 @@ app.use('/saveNewUserData', saveNewUserData);
 app.use('/addFriend', addFriend);
 // app.use('/addDreamList', addDreamList);
 app.use('/yelp', yelp);
+app.use('/locrec', locationrecommender);
+app.use('/myalbums', myalbums);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
