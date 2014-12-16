@@ -5,4 +5,3 @@ npm install monk
 npm install mongodb 
 npm install request
 npm install base64
-npm install yelp
