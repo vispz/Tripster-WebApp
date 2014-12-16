@@ -53,8 +53,8 @@ router.post('/', function(req, res) {
 	console.log(typeof(trip_id));
 
 username = req.session.name;
-	//trip_id = parseInt(req.body.trip_id);
-	trip_id = req.body.trip_id;
+	trip_id = parseInt(req.body.trip_id);
+	//trip_id = req.body.trip_id;
 	
 
 	albumname = req.body.albumname;
@@ -99,7 +99,7 @@ function create_album(res, trip_id) {
 						console.log(err);
 					} else {
 						connection.close();
-						res.redirect('/viewalbums?trip_id=' + trip_id);
+						res.redirect('/viewalbums?tripid=' + trip_id);
 					}
 				});
 		}
