@@ -23,8 +23,8 @@ router.get('/',function(req,res){
 function getdata(res) {
 
 oracle.connect(connectData, function(err, connection) {
-    var myquery = "SELECT T.NAME AS NAME, T.ID AS ID FROM TRIPS T WHERE T.ADMIN='"+admin+"' " + "UNION SELECT T.NAME AS NAME , P.TRIP_ID AS ID FROM PARTICIPATES P "+
-     "INNER JOIN TRIPS T ON P.TRIP_ID=T.ID WHERE P.USERNAME='"+admin+"'";
+    var myquery = "SELECT T.NAME AS NAME , P.TRIP_ID AS ID FROM PARTICIPATES P  "+
+"INNER JOIN TRIPS T ON P.TRIP_ID=T.ID WHERE P.USERNAME='"+admin+"'" ;
     if (err) { console.log("Error connecting to db:", err); return; }
     connection.execute(myquery, [], function(err,results) {
     	if(err) {console.log("Error executing query: ",err); return;}

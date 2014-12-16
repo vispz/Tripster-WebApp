@@ -116,7 +116,10 @@ html
               for comm in result
                 li
                   .commenterImage
-                    img(src='#{comm.PHOTO_URL}', width='4', height='30')
+                    if comm.hasImage
+                      img(src=comm.image, width='4', height='30')
+                    else
+                      img(src=comm.PHOTO_URL, width='4', height='30')
                   |                 
                   .commentText
                     p #{comm.COMMENTS}
