@@ -127,7 +127,7 @@ function checkmemberstatus(res,privacysetting) {
                         }
                     }
                     if (member==false){
-                       
+                        
                         res.redirect('/login');
                     }
 

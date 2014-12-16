@@ -106,7 +106,7 @@ html(lang='en')
               i.fa.fa-caret-down
             |             
             ul.dropdown-menu.dropdown-messages
-              - console.log("\n\n\n\n\n\n\n results:", results, "\nresults.trip_requests: ", results.trip_requests, "len : ", len)
+              //- console.log("\n\n\n\n\n\n\n results:", results, "\nresults.trip_requests: ", results.trip_requests, "len : ", len)
               - var len = results.trip_requests.length
               //- each trip_var in results.trip_requests    
               - var maxNum = 5
@@ -135,7 +135,6 @@ html(lang='en')
                   |               
                   li.divider
               if (len == 0)
-                - console.log("In here len 0")
                 |               
                 |               
                 li
