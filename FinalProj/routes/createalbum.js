@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
 
 	trip_id = req.query.tripid;
 	//res.send(trip_id)
-	res.render('createalbum', {TRIP_ID: tripid});
+	res.render('createalbum', {TRIP_ID: trip_id});
 });
 
 // This method is responsible for when user clicks create album button.
@@ -69,7 +69,7 @@ function create_album(res) {
 					} else {
 						connection.close();
 						console.log(results);
-						res.redirect('/viewalbums?tripid=' + tripid);
+						res.redirect('/viewalbums?tripid=' + trip_id);
 					}
 				});
 		}
