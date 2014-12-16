@@ -20,47 +20,42 @@ var yelp = require("yelp").createClient({
 //Mongo code
 var mongo = require('mongod');
 var monk = require('monk');
-var db = monk('localhost:27017/caching');
+var db = monk('localhost:27017/media');
+var Db = require('mongodb').Db,
+ MongoClient = require('mongodb').MongoClient,
+ Server = require('mongodb').Server,
+ ReplSetServers = require('mongodb').ReplSetServers,
+ ObjectID = require('mongodb').ObjectID,
+ Binary = require('mongodb').Binary,
+ GridStore = require('mongodb').GridStore,
+ Grid = require('mongodb').Grid,
+ Code = require('mongodb').Code,
+ BSON = require('mongodb').pure().BSON,
+ assert = require('assert');
+var sys = require('sys');
+var base64_encode = require('base64').encode;
+var Buffer1 = require('buffer').Buffer;
+var http = require('http');
+var request = require('request');
 
 
 /*get the mytrips page*/
 router.get('/',function(req,res){
 
-    if(!req.session.name)
-    {   
-        res.render('index.jade',
-                        {
-                            success : 0,
-                            error : "Please log in first"
-                        });
-    }
-    else
-    {
    tripid = req.query.tripid;
    admin = req.session.name;
 
     //admin = 'FSpagMon';
     //tripid = 1;
    checkadminstatus(res);
-    }
 
     });
 
 router.post('/', function(req,res) {
-    if(!req.session.name)
-    {   
-        res.render('index.jade',
-                        {
-                            success : 0,
-                            error : "Please log in first"
-                        });
-    }
-    else
-    {
+    
     getrating(res,req);
     getcomments(res,req);
     getinvite(res,req);
-    }
     
 });
 
@@ -81,17 +76,13 @@ function checkadminstatus(res){
                 console.log(tripadmin);
                 console.log("admin");
                 console.log(admin);
-                if(admin===undefined) {
-                    alert("The admin has set the trip settings to private\nRedirecting to home page");
-                    res.redirect('/login');
-                }
+                
                 if(tripadmin==admin){
                      
                             gettripdata(res);
                 }
                 else {
-                    console.log(checkmemberstatus);
-                    console.log(admin);
+                    
                     checkmemberstatus(res,privacysetting);
                 }
 
@@ -114,62 +105,9 @@ function checkmemberstatus(res,privacysetting) {
                 console.log(results);
                 connection.close();
                 console.log(privacysetting);
-                
-
-                if(privacysetting =="sharedByTripMembers"){
-                    console.log("inside sharedbytripmembers");
-                    var member = false;
-                    for(i=0; i<results.length; i++){
-
-                        if (results[i].MEMBERS==admin){
-                            member = true;
-                            gettripdata(res);
-                        }
-                    }
-                    if (member==false){
-                        
-                        res.redirect('/login');
-                    }
-
-                }
-                else if(privacysetting =="private"){
-                    console.log("inside private");
-                    var member = false;
-                    var memberindex;
-                    for(i=0; i<results.length; i++){
-                        if (results[i].MEMBERS==admin){
-                            console.log("member set to true");
-                            member = true;
-                            memberindex=i;
-                            break;
-                        }
-                    }
-                    if(member==true){
-                        
-                        if(results[memberindex].RSVP=="accepted"){
-                             gettripdata(res);
-                             console.log("going to get trip data");
-                        }
-                        else {
-                      
-                        res.redirect('/login');
-                        }
-                    } else {
-                        
-                        res.redirect('/login');
-                    }
-                    
-                }
-                
-                else if (privacysetting=="public"){
-                    console.log("inside public");
-                    gettripdata(res);
-                }
-                else {
-                    console.log("inside redirection");
-                    res.redirect('/login');
-                }
+                gettripdata(res);
             });
+
     });
 
 }
@@ -177,7 +115,7 @@ function checkmemberstatus(res,privacysetting) {
 function gettripdata(res){
 
     var myquery = "SELECT AVG(P.RATE) AS AVERAGE , T.NAME AS NAME FROM PARTICIPATES P INNER JOIN TRIPS T ON P.TRIP_ID = T.ID" +
-                    " WHERE TRIP_ID="+tripid+ " GROUP BY NAME";
+                    " WHERE P.TRIP_ID="+tripid+ " GROUP BY T.NAME";
     console.log(myquery);
     oracle.connect(connectData, function(err, connection) {
             if (err) { console.log("Error connecting to db:", err); return; }
@@ -185,7 +123,6 @@ function gettripdata(res){
                 if(err) {console.log("Error executing query: ",err); return;}
                 console.log(results);
                 connection.close();
-                console.log(1);
                 getuserdata(res,results);
             });
     });
@@ -211,6 +148,8 @@ function getuserdata(res,tripresults){
     });
 }
 
+
+
 function getcommentdata(res,tripresults,userresults) {
 
     var myquery = " SELECT U.FIRSTNAME AS FIRSTNAME, U.LASTNAME, U.PHOTO_URL, P.COMMENTS, T.NAME  FROM USERS U "+ 
@@ -223,12 +162,163 @@ oracle.connect(connectData, function(err, connection) {
         if(err) {console.log("Error executing query: ",err); return;}
         console.log(results);
         connection.close();
-        getmembers(res,tripresults,userresults,results);
+        if (results){
+            wrapCommentImage(res,tripresults,userresults,results,0);
+        }
+        else getmembers(res,tripresults,userresults,results);
 
     });
 });
 }
 
+function wrapCommentImage(res,tripresults,userresults,results,index){
+        console.log(index);
+        
+        if (index == results.length) {
+            getmembers(res,tripresults,userresults,results);
+            return;
+        }
+
+        //connects to mongo client and database running at port 27017
+        MongoClient.connect('mongodb://127.0.0.1:27017/media', function(err, db) {
+
+            if (!err) {
+                console.log("We are connected");
+            } else {
+                return;
+            }
+            //placing the media id in check id and asking gridstore if the id exists  
+            var checkid = results[index].PHOTO_URL.toString();
+
+            GridStore.exist(db, checkid, function(err, result) { //check if the file that we pushed to gridstore exists
+                console.log("are we in gridstore exists????????????");
+                if(result) {
+                    console.log("exists is 1, that means found in cache!!!!");
+                    getcache(res,tripresults,userresults,db,results,index);
+
+                }
+                else if(!result) {
+                    console.log("aDid not find in cache :( !!!");
+                    addToCache(res,tripresults,userresults,db,results,index);
+
+                }
+                else if(err) {
+                    console.log("Error occured");
+                    return;
+                }
+                else {
+                    console.log(result);
+                    console.log(exists);
+                    console.log(err);
+
+                }
+            
+                console.log("gridstore exists function closes!");
+            });
+            
+        
+       });
+}
+
+function getcache(res,tripresults,userresults,db,results,index) {
+ //reading the data from mongodb for checkid and storing it in fileData: this is the image in binary
+
+                    var hasImage;
+                    console.log("Data is in Cache!");
+                    GridStore.read(db, results[index].PHOTO_URL.toString(), function(err, fileData) { //to read the data from the grid store. now this data will be in binary
+
+                        //var buf = new Buffer(fileData, 'base64'); // Ta-da
+                        console.log("reading image in base 64 done");
+                        // read all the data in base64 format string 
+                        console.log('Done');
+
+                        hasImage = true;
+                        results[index].image ="data:image/jpeg;base64,"+fileData.toString('base64'); //setting the image in the JSON
+                        results[index].hasImage = true; //setting the property that the JSON contains the image at the index
+                        //res.write(fileData, 'binary');
+                        //res.end(fileData,'binary');
+                        //console.log(fileData);
+                        //console.log('Really done');
+                       
+                        db.close(); //i have obtained the cached data and i close the database
+                        wrapCommentImage(res,tripresults,userresults,results,index + 1);
+
+                    }); //end of gridstore read   
+                
+
+}
+
+function addToCache(res,tripresults,userresults,db,results,index ) {
+ console.log("Data is NOT in cache, so cache it ! ");
+
+ var hasImage;
+                    hasImage = false;
+                    results.image = null;
+                    results.hasImage = false; //setting the property that the JSON  doesn't contain the image at the index
+                    var fileId = results[index].PHOTO_URL.toString();
+                    var urlm = results[index].PHOTO_URL.toString();
+                    console.log("FILEID : ", fileId);
+                    console.log("URLM : ", urlm);
+                    var gridStore = new GridStore(db, fileId, 'w');
+                    gridStore.chunkSize = 1024 * 256;
+                    // Open the file
+                    gridStore.open(function(err, gridStore) {
+                        console.log("gridstore open!");
+                        http.get(urlm, function(response) {
+                            //this is the http request and we get a response and the body
+                            response.setEncoding('binary');
+                            var image2 = '';
+                            console.log(urlm);
+                            console.log('reading data in chunks first');
+                                response.on('data', function(chunk){
+                                      image2 += chunk;
+                                    console.log('reading data');
+                                  });
+                                
+                                response.on('end', function() {
+
+                            console.log("requesting HTTTP DONE!");
+                            var image = new Buffer(image2, 'binary'); //we take this body in binary form 
+                            console.log("CONVERTING FILE TO BINARY, DONE!");
+                            // Write some data to the file
+                            gridStore.write(image, function(err, gridStore) { // the opened gridstore file is written with the binary image
+
+                                assert.equal(null, err);
+                                if (!err)
+                                    console.log("WRITING THE IMAGE DONE! ", err);
+                                else
+                                    console.log("Error occurred"); // Close (Flushes the data to MongoDB)
+                                gridStore.close(function(err, result) { //the gridstore file is closed()
+                                    assert.equal(null, err);
+
+                                    // Verify that the file exists
+                                    GridStore.exist(db, fileId, function(err, result) { //check if the file that we pushed to gridstore exists
+                                        assert.equal(null, err);
+                                        assert.equal(true, result);
+
+                                        // Read back all the written content and verify the correctness
+                                        GridStore.read(db, fileId, function(err, fileData) { //to read the data from the grid store. now this data will be in binary
+                                            assert.equal(image.toString('base64'), fileData.toString('base64'));
+
+                                            console.log("reading image in base 64 done");
+                                            // read all the data in base64 format string 
+                                            console.log('Done');
+                                            console.log(typeof(fileData));
+                                            db.close();
+                                            wrapCommentImage(res,tripresults,userresults,results,index + 1);
+                                         
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    }).on('error', function(e) {
+                        console.log("Got error: " + e.message);
+                        wrapCommentImage(res,tripresults,userresults,results, index + 1);
+                    });
+            });
+
+}
 
 function getmembers(res,tripresults,userresults,commentresults){
         var myquery = "SELECT U.FIRSTNAME, U.LASTNAME, U.USERNAME, P.RSVP AS RSVP FROM USERS U INNER JOIN PARTICIPATES P ON P.USERNAME=U.USERNAME WHERE P.TRIP_ID="+tripid;
@@ -251,9 +341,7 @@ function getTripLocation(res, tripresults, userresults, commentresults, memberre
         if (err) {
             console.log(err);
         } else {
-            var cmd = "SELECT L.NAME FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID WHERE T.TRIP_ID = " + tripid;
-            console.log(cmd);
-            connection.execute(cmd,
+            connection.execute("SELECT L.NAME FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID WHERE T.TRIP_ID = " + tripid,
                 [],
                 function(err, results) {
                     if (err) {
@@ -261,27 +349,37 @@ function getTripLocation(res, tripresults, userresults, commentresults, memberre
                     } else {
                         connection.close();
                         trip_location = results[0].NAME;
-                        getYelp(res, tripresults, userresults, commentresults, memberresults);
+                        getYelp(res, trip_location, tripresults, userresults, commentresults, memberresults)  
                     }
                 });
         }
     });
 }
 
-function getYelp(res, tripresults, userresults, commentresults, memberresults) {
+function getYelp(res, trip_location, tripresults, userresults, commentresults, memberresults) {
     yelp.search({term: "food", location: trip_location, limit: 5, sort: 2}, function(error, data) {
-      console.log(error);
+      console.log("error");
       gettripspage(res, tripresults, userresults, commentresults, memberresults, data);
     });
 }
 
 
 function gettripspage(res,tripresults,userresults,commentresults,memberresults, yelpdata) {
-    if (Object.keys(tripresults).length>0){
-    res.render('tripspage', { result: commentresults, title: tripresults[0].NAME, tid: tripid, friends: userresults, mem: memberresults, username: admin, rate: Math.round(tripresults[0].AVERAGE), yelp: yelpdata});
-    } else {
-        res.redirect('/login');
-    }
+    console.log("Before rendering");
+    if(Object.keys(tripresults).length>=1 ) {
+    var retVal = { result: commentresults, 
+                                title: tripresults[0].NAME, 
+                                tid: tripid, 
+                                friends: userresults, 
+                                mem: memberresults, 
+                                username: admin, 
+                                rate: Math.round(tripresults[0].AVERAGE), 
+                                yelp : yelpdata};
+    console.log("\n\n\n\n\n\nValues sent : ", retVal);
+    console.log("\n\n\n\n\n\nValues Done ");
+
+    res.render('tripspage', retVal);
+    } else res.redirect('/login');
 }
 
 function getrating(res,req){

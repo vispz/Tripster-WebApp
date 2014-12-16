@@ -49,12 +49,12 @@ router.post('/', function(req, res) {
 	}
 	else
 	{
-	console.log("In post trip_id : ", trip_id );
-	console.log(typeof(trip_id));
 
 username = req.session.name;
-	//trip_id = parseInt(req.body.trip_id);
-	trip_id = req.body.trip_id;
+	trip_id = parseInt(req.body.trip_id);
+	console.log("In post trip_id : ", trip_id );
+	console.log(typeof(trip_id));
+	//trip_id = req.body.trip_id;
 	
 
 	albumname = req.body.albumname;
@@ -70,6 +70,8 @@ function getNewAlbumID(res, req, trip_id) {
 		if (err) {
 			console.log(err);
 		} else {
+			console.log("In getNewAlbumID trip_id : ", trip_id );
+	console.log(typeof(trip_id));
 			//connection.execute("SELECT URL FROM MEDIA WHERE LOC_ID = 32 AND TYPE = 'photo'",
 			connection.execute("SELECT MAX(ID) AS MAX FROM ALBUMS",
 				[],
@@ -91,6 +93,8 @@ function create_album(res, trip_id) {
 		if (err) {
 			console.log(err);
 		} else {
+			console.log("In create_album trip_id : ", trip_id );
+	console.log(typeof(trip_id));
 			var cmd = "INSERT INTO ALBUMS(ID, NAME, USERNAME, TRIP_ID, PRIVACY) VALUES(" + new_album_id + ", '" + albumname + "', '" + username + "', " + trip_id + ", '" + privacy +  "')";
 			connection.execute(cmd,
 				[], 
@@ -99,7 +103,8 @@ function create_album(res, trip_id) {
 						console.log(err);
 					} else {
 						connection.close();
-						res.redirect('/viewalbums?trip_id=' + trip_id);
+						res.redirect('/viewalbums?tripid=' + trip_id);
+						//res.render('/viewalbums?trip_id=' + trip_id);
 					}
 				});
 		}
