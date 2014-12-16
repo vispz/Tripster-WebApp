@@ -17,20 +17,34 @@ var type; // Set during post
 
 
 router.get('/', function(req, res) {
-	album_id = req.query.albumid;
-	res.render('addmedia', {album: album_id});
+	if(!req.session.name)
+	{	
+		res.redirect('/');
+	}
+	else
+	{
+		album_id = req.query.albumid;
+		res.render('addmedia', {album: album_id});
+	}
 });
 
 router.post('/', function(req, res) {
 	//res.send(req.body);
 	//res.send(album_id);
-	caption = req.body.caption;
-	imageurl = req.body.imageurl;
-	type = req.body.type;
-	album_id = req.body.albumid;
-	//res.send(req.body.albumid);
-	//res.send(album_id + " " + media_id + " " + caption + " " + loc_id + " " + imageurl + " " + type);
-	query_db(res, req);
+	if(!req.session.name)
+	{	
+		res.redirect('/');
+	}
+	else
+	{
+		caption = req.body.caption;
+		imageurl = req.body.imageurl;
+		type = req.body.type;
+		album_id = req.body.albumid;
+		//res.send(req.body.albumid);
+		//res.send(album_id + " " + media_id + " " + caption + " " + loc_id + " " + imageurl + " " + type);
+		query_db(res, req);
+	}
 });
 
 // Queries the database and sets value for the new media_id and the loc_id associated with new media.

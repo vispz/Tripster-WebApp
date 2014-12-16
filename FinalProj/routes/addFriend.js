@@ -50,16 +50,28 @@ function queryDb(res, req, isPost)
 }
 /* GET home page. */
  router.get('/', function(req, res) {
-	console.log("Req query for friendAcceptance : "+req.query)
-	queryDb(res,req, false);
+	console.log("Req query for friendAcceptance : "+req.query);
+	if(!req.session.name){
+		res.redirect('/');
+	}
+	else{
+		queryDb(res,req, false);
+	}
 	//res.send( JSON.stringify(req.body.submitAddFriend.results ) );
 });
 
 /////
 /* GET home page. */
 router.post('/', function(req, res) {
-	console.log("Req query for friendAcceptance : "+req.body)
-	queryDb(res,req, true);
+	console.log("Req query for friendAcceptance : "+req.body);
+	if(!req.session.name)
+	{
+		res.redirect('/');
+	}
+	else
+	{
+		queryDb(res,req, true);
+	}
 	//res.send( JSON.stringify(req.body.submitAddFriend.results ) );
 });
 
