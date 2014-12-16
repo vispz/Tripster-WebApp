@@ -36,7 +36,6 @@ function query_db(res) {
 			" AND PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + 
 			username + "'";
 			console.log(cmd);
-			connection.execute(cmd,
 			connection.execute("SELECT ID, NAME, TRIP_ID FROM ALBUMS WHERE TRIP_ID = " + trip_id + " AND (PRIVACY = 'public' OR PRIVACY = 'sharedWithTripMembers' OR USERNAME ='" + username + "')",
 				[],
 				function(err, results) {

@@ -251,7 +251,9 @@ function getTripLocation(res, tripresults, userresults, commentresults, memberre
         if (err) {
             console.log(err);
         } else {
-            connection.execute("SELECT L.NAME FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID WHERE T.TRIP_ID = " + tripid,
+            var cmd = "SELECT L.NAME FROM LOCATION L INNER JOIN TRIP_LOCATION T ON T.LOC_ID = L.ID WHERE T.TRIP_ID = " + tripid;
+            console.log(cmd);
+            connection.execute(cmd,
                 [],
                 function(err, results) {
                     if (err) {
