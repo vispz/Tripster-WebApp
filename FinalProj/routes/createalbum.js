@@ -7,13 +7,15 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username = 'lsn';
+var username ;
 var trip_id;
 var albumname;
 var privacy;
 var new_album_id;
 
 router.get('/', function(req, res) {
+	username = req.session.name;
+
 	if(!req.session.name)
 	{	
 		res.render('index.jade',
@@ -24,7 +26,8 @@ router.get('/', function(req, res) {
 	}
 	else
 	{
-	trip_id = req.query.trip_id;
+username = req.session.name;
+	trip_id = req.query.tripid;
 	//res.send(trip_id)
 	res.render('createalbum', {TRIP_ID: trip_id});
 	}
@@ -45,6 +48,7 @@ router.post('/', function(req, res) {
 	}
 	else
 	{
+username = req.session.name;
 	trip_id = parseInt(req.body.trip_id);
 	albumname = req.body.albumname;
 	privacy = req.body.privacy;

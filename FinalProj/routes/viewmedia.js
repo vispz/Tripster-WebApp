@@ -172,8 +172,9 @@ function getMedia(res, req) {
 					} else {
 						console.log(results);
 						connection.close();
+                        if (results){
                         wrapmedia(res,req,results,0);
-		           
+		                } else getMediaResults(res, req, results);
    					//assigning object ID as the media ID
 	               }						
                 });

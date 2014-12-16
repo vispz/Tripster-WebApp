@@ -7,7 +7,7 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username = 'lsn';
+var username;
 var album_id; // Set during get
 var media_id; // Set during post
 var loc_id; // Set during post
