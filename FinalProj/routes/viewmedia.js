@@ -7,7 +7,7 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username = 'lsn';
+var username;
 var album_id;
 
 //For post request - add comments, ratings to media
@@ -16,13 +16,14 @@ var comment;
 var rating;
 
 router.get('/', function(req, res) {
-	
+	username = req.session.name;
 	album_id = req.query.albumid;
 	getMedia(res, req);
 });
 
 router.post('/', function(req, res) {
 	//res.send(req.body);
+	username = req.session.name;
 	album_id = req.body.albumid;
 	media_ref = req.body.photoid;
 	comment = req.body.comments;
