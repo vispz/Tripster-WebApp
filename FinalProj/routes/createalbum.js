@@ -96,7 +96,8 @@ function create_album(res, trip_id) {
 			console.log("In create_album trip_id : ", trip_id );
 	console.log(typeof(trip_id));
 			var cmd = "INSERT INTO ALBUMS(ID, NAME, USERNAME, TRIP_ID, PRIVACY) VALUES(" + new_album_id + ", '" + albumname + "', '" + username + "', " + trip_id + ", '" + privacy +  "')";
-			connection.execute(cmd,
+			console.log(cmd);
+				connection.execute(cmd,
 				[], 
 				function(err, results) {
 					if (err) {

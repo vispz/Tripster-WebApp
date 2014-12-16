@@ -26,7 +26,7 @@ function query_friends(res, req)
             var cmd = " SELECT  U.username, U.firstname, U.lastname, U.photo\_url "+
                       " FROM FRIENDS F "+
                       " INNER JOIN USERS U ON F.username2=U.username "+
-                      " WHERE F.username1='"+username+"' ";
+                      " WHERE F.username1='"+username+"' AND STATUS='accepted' ";
 
             console.log(cmd);
             connection.execute(cmd,

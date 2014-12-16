@@ -14,5 +14,5 @@ block body
                       .col-md-4
                         img(src=user.PHOTO_URL, alt='profilePic', align='center', width = "100%")
                       .col-md-7
-                        a(href='/userPage?username_other=#{user.USERNAME}') #{user.FIRSTNAME} #{user.LASTNAME}
+                        | #{user.FIRSTNAME} #{user.LASTNAME}
                     br
