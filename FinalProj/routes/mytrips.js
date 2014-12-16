@@ -9,6 +9,7 @@ var connectData = {
     password: "foreignkey99"
 }
 var tripid;
+var admin;
 /*get the mytrips page*/
 router.get('/',function(req,res){
 
