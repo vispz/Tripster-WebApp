@@ -1,26 +1,84 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node', '/usr/local/bin/npm', 'start' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'https' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.33
-4 verbose run-script [ 'prestart', 'start', 'poststart' ]
-5 info prestart FinalProj@0.0.0
-6 info start FinalProj@0.0.0
-7 verbose unsafe-perm in lifecycle true
-8 info FinalProj@0.0.0 Failed to exec start script
-9 error FinalProj@0.0.0 start: `node ./bin/www`
-9 error Exit status 8
-10 error Failed at the FinalProj@0.0.0 start script.
-10 error This is most likely a problem with the FinalProj package,
-10 error not with npm itself.
-10 error Tell the author that this fails on your system:
-10 error     node ./bin/www
-10 error You can get their info via:
-10 error     npm owner ls FinalProj
-10 error There is likely additional logging output above.
-11 error System Darwin 13.3.0
-12 error command "node" "/usr/local/bin/npm" "start"
-13 error cwd /Users/niveditavelagaleti/Documents/Databases/repo4/cis550-final-proj/FinalProj
-14 error node -v v0.10.33
-15 error npm -v 1.4.28
-16 error code ELIFECYCLE
-17 verbose exit [ 1, true ]
+4 verbose readDependencies using package.json deps
+5 verbose cache add [ 'https', null ]
+6 verbose cache add name=undefined spec="https" args=["https",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'https',
+7 verbose parsed url   path: 'https',
+7 verbose parsed url   href: 'https' }
+8 silly lockFile c3437dbc-https https
+9 verbose lock https /Users/niveditavelagaleti/.npm/c3437dbc-https.lock
+10 silly lockFile c3437dbc-https https
+11 silly lockFile c3437dbc-https https
+12 verbose addNamed [ 'https', '' ]
+13 verbose addNamed [ null, '*' ]
+14 silly lockFile 421d451a-https https@
+15 verbose lock https@ /Users/niveditavelagaleti/.npm/421d451a-https.lock
+16 silly addNameRange { name: 'https', range: '*', hasData: false }
+17 verbose request where is /https
+18 verbose request registry https://registry.npmjs.org/
+19 verbose request id 173a1a32aaf7e913
+20 verbose url raw /https
+21 verbose url resolving [ 'https://registry.npmjs.org/', './https' ]
+22 verbose url resolved https://registry.npmjs.org/https
+23 verbose request where is https://registry.npmjs.org/https
+24 info trying registry request attempt 1 at 16:19:43
+25 http GET https://registry.npmjs.org/https
+26 http 404 https://registry.npmjs.org/https
+27 verbose headers { date: 'Sun, 14 Dec 2014 21:19:44 GMT',
+27 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+27 verbose headers   'content-type': 'application/json',
+27 verbose headers   'cache-control': 'max-age=0',
+27 verbose headers   'content-length': '52',
+27 verbose headers   'accept-ranges': 'bytes',
+27 verbose headers   via: '1.1 varnish',
+27 verbose headers   age: '0',
+27 verbose headers   'x-served-by': 'cache-iad2122-IAD',
+27 verbose headers   'x-cache': 'MISS',
+27 verbose headers   'x-cache-hits': '0',
+27 verbose headers   'x-timer': 'S1418591984.883883,VS0,VE58',
+27 verbose headers   'keep-alive': 'timeout=10, max=50',
+27 verbose headers   connection: 'Keep-Alive' }
+28 silly registry.get cb [ 404,
+28 silly registry.get   { date: 'Sun, 14 Dec 2014 21:19:44 GMT',
+28 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+28 silly registry.get     'content-type': 'application/json',
+28 silly registry.get     'cache-control': 'max-age=0',
+28 silly registry.get     'content-length': '52',
+28 silly registry.get     'accept-ranges': 'bytes',
+28 silly registry.get     via: '1.1 varnish',
+28 silly registry.get     age: '0',
+28 silly registry.get     'x-served-by': 'cache-iad2122-IAD',
+28 silly registry.get     'x-cache': 'MISS',
+28 silly registry.get     'x-cache-hits': '0',
+28 silly registry.get     'x-timer': 'S1418591984.883883,VS0,VE58',
+28 silly registry.get     'keep-alive': 'timeout=10, max=50',
+28 silly registry.get     connection: 'Keep-Alive' } ]
+29 silly lockFile 421d451a-https https@
+30 silly lockFile 421d451a-https https@
+31 error 404 404 Not Found: https
+31 error 404
+31 error 404 'https' is not in the npm registry.
+31 error 404 You should bug the author to publish it
+31 error 404 It was specified as a dependency of 'FinalProj'
+31 error 404
+31 error 404 Note that you can also install from a
+31 error 404 tarball, folder, or http url, or git url.
+32 error System Darwin 13.3.0
+33 error command "node" "/usr/local/bin/npm" "install" "https"
+34 error cwd /Users/niveditavelagaleti/Documents/Databases/repo4/cis550-final-proj/FinalProj
+35 error node -v v0.10.33
+36 error npm -v 1.4.28
+37 error code E404
+38 verbose exit [ 1, true ]

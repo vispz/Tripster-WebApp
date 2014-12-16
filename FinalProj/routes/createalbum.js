@@ -7,16 +7,18 @@ var connectData = {
 	password: "foreignkey99",
 	database: "TRIPSTER"};
 var oracle = require("oracle");
-var username = 'lsn';
+var username ;
 var trip_id;
 var albumname;
 var privacy;
 var new_album_id;
 
 router.get('/', function(req, res) {
-	trip_id = req.query.trip_id;
+	username = req.session.name;
+
+	trip_id = req.query.tripid;
 	//res.send(trip_id)
-	res.render('createalbum', {TRIP_ID: trip_id});
+	res.render('createalbum', {TRIP_ID: tripid});
 });
 
 // This method is responsible for when user clicks create album button.
@@ -66,7 +68,8 @@ function create_album(res) {
 						console.log(err);
 					} else {
 						connection.close();
-						res.redirect('/viewalbums?trip_id=' + trip_id);
+						console.log(results);
+						res.redirect('/viewalbums?tripid=' + tripid);
 					}
 				});
 		}

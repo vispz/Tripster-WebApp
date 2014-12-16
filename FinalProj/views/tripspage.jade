@@ -30,7 +30,7 @@ html
             li.active
               a(href='/mytrips') My Trips
             li
-              a(href='/album') Create Album
+              a(href='/album?tripid=#{tid}') Create Album
             li
               a(href='#invite') Invite Friends
             li
@@ -116,7 +116,10 @@ html
               for comm in result
                 li
                   .commenterImage
-                    img(src='#{comm.PHOTO_URL}', width='4', height='30')
+                    if comm.hasImage
+                      img(src=comm.image, width='4', height='30')
+                    else
+                      img(src=comm.PHOTO_URL, width='4', height='30')
                   |                 
                   .commentText
                     p #{comm.COMMENTS}

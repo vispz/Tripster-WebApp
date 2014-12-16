@@ -21,8 +21,9 @@ var Db = require('mongodb').Db,
  Code = require('mongodb').Code,
  BSON = require('mongodb').pure().BSON,
  assert = require('assert');
-
 var request = require('request');
+var http = require('http');
+
 
 
 var tripid;
@@ -41,17 +42,28 @@ router.get('/', function(req, res) {
     console.log("in get method");
 
    MongoClient.connect('mongodb://127.0.0.1:27017/caching', function(err, db) {
-    var fileId = 'testinggoogle.txt'; // this is the cache??
+    var fileId = 'vishnu'; // this is the cache??
   // Create a new instance of the gridstore
-  var gridStore = new GridStore(db, 'testinggoogle.txt', 'w');
+  var gridStore = new GridStore(db, fileId, 'w');
 
   // Open the file
   gridStore.open(function(err, gridStore) {
 //this is just one binary that we are creating and for just 1 image
-      request('http://i.forbesimg.com/media/lists/companies/google_416x416.jpg', function (error, response, body) {  //this is the http request and we get a response and the body
+//new
+      http.get('http://i.forbesimg.com/media/lists/companies/google_416x416.jpg', function (response) {  //this is the http request and we get a response and the body
         //of the response
+            response.setEncoding('binary'); //new
+            var image2 = ''; //new
+            console.log('reading data in chunks first');
+                response.on('data', function(chunk){
+                      image2 += chunk;
+                    console.log('reading data');
+                  });
+                
+                response.on('end', function() {
+                  console.log('done reading data');
             console.log("requesting HTTTP DONE!");
-            image = new Buffer(body, 'binary'); //we take this body in binary form 
+            image = new Buffer(image2, 'binary'); //we take this body in binary form 
             console.log("CONVERTING FILE TO BINARY, DONE!");
             // Write some data to the file
             gridStore.write(image, function(err, gridStore) {  // the opened gridstore file is written with the binary image
@@ -62,26 +74,22 @@ router.get('/', function(req, res) {
                 assert.equal(null, err);
 
                 // Verify that the file exists
-                GridStore.exist(db, 'testinggoogle.txt', function(err, result) {  //check if the file that we pushed to gridstore exists
+                GridStore.exist(db, fileId, function(err, result) {  //check if the file that we pushed to gridstore exists
                   assert.equal(null, err);
                   assert.equal(true, result);
                   
                   // Read back all the written content and verify the correctness
                   GridStore.read(db, fileId, function(err, fileData) {          //to read the data from the grid store. now this data will be in binary
-                    assert.equal(image.toString('base64'), fileData.toString('base64'));
+                   
                     console.log("reading image in base 64 done");
 // read all the data in base64 format string 
                   console.log('Done');
-                   res.writeHead(200, {
-                                    'Content-Type': 'image/jpg',
-                                    'Content-Length':fileData.length});
-
-                                console.log("File length is " +fileData.length);
-                                res.write(fileData, "binary");
-                                res.end(fileData,"binary");
-                                console.log('Really done');
+                  var srcimage = "data:image/jpeg;base64,"+fileData.toString('base64'); 
+                   console.log(srcimage);
+                   res.render('test', {result: srcimage});
 
                     db.close();
+                    
                   });                 
                 });
               });
@@ -99,6 +107,7 @@ router.get('/', function(req, res) {
             "testlist" : docs
         });
     });*/
+});
 });
 
 /*
