@@ -14,7 +14,7 @@ var privacy;
 var new_album_id;
 
 router.get('/', function(req, res) {
-	trip_id = req.query.trip_id;
+	trip_id = req.query.tripid;
 	//res.send(trip_id)
 	res.render('createalbum', {TRIP_ID: trip_id});
 });
