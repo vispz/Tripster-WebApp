@@ -348,7 +348,11 @@ function getTripLocation(res, tripresults, userresults, commentresults, memberre
                         console.log(err);
                     } else {
                         connection.close();
-                        trip_location = results[0].NAME;
+			
+		if (results.length>0 && results[0].NAME)
+			 trip_location = results[0].NAME;
+		else 
+			 trip_location = "USA";
                         getYelp(res, trip_location, tripresults, userresults, commentresults, memberresults)  
                     }
                 });
@@ -367,7 +371,8 @@ function getYelp(res, trip_location, tripresults, userresults, commentresults, m
 function gettripspage(res,tripresults,userresults,commentresults,memberresults, yelpdata) {
     console.log("Before rendering");
     if(Object.keys(tripresults).length>=1 ) {
-    var retVal = { result: commentresults, 
+    
+	var retVal = { result: commentresults, 
                                 title: tripresults[0].NAME, 
                                 tid: tripid, 
                                 friends: userresults, 
