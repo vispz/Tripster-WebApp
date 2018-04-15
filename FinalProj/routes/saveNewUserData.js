@@ -6,7 +6,7 @@ var crypto=require('crypto');
 var connectData = { 
 		"hostname": "cis550.c9yomnhycrjl.us-west-2.rds.amazonaws.com", 
 		"user": "visp", 
-		"password": "foreignkey99", 
+		"password": "<>", 
 		"database": "TRIPSTER" };
 var oracle =  require("oracle");
 
